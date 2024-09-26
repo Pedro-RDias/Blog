@@ -1,27 +1,25 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace Blog.Models;
 
+[PrimaryKey("RecipeId", "AuthorId")]
 public class Comment
 {
-    [Key]
-    public int CommentId { get; set; }
-
-    [Required]
-    public int RecipeId { get; set; }  // Foreign key to Recipe
-
-    [Required]
-    public string AuthorId { get; set; }  // Foreign key to AspNetUsers
-
-    [Required]
-    public string Content { get; set; }  // Comment text
+    [ForeignKey("Recipe")]
+    public int RecipeId { get; set; }
+    
+    [ForeignKey("User")]
+    public string AuthorId { get; set; }
+    
+    [Required, MaxLength(500)]
+    public string Content { get; set; }
 
     public DateTime DateCreated { get; set; } = DateTime.Now;
+    public DateTime DateUpdated { get; set; } = DateTime.Now;
 
     // Navigation properties
-    [ForeignKey("AuthorId")]
-    public virtual User Author { get; set; }  // The user who created the comment
-
-    public virtual Recipe Recipe { get; set; }
+    [ForeignKey("UserId")]
+    public virtual User Author { get; set; }
 }

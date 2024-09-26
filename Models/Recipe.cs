@@ -1,46 +1,52 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Blog.Data.Enums;
 
 namespace Blog.Models;
 
 public class Recipe
 {
     [Key]
-    public int RecipeId { get; set; }
-
-    [Required]
-    [StringLength(255)]
+    public int Id { get; set; }
+    
+    [Required, StringLength(255)]
     public string Title { get; set; }
 
-    [StringLength(500)]
-    public string Summary { get; set; }  // Short summary of the recipe
+    [Required, StringLength(500)]
+    public string Summary { get; set; }
 
     [Required]
-    [StringLength(100)]
-    public string Category { get; set; }  // Category like "Dessert", "Main Course"
+    public Category Category { get; set; }
 
     [Required]
-    public string AuthorId { get; set; }  // Foreign key from AspNetUsers
+    public Diet Diet { get; set; }
 
+
+    [Required, ForeignKey("User")]
+    public string AuthorId { get; set; }
+
+    [Required]
     public DateTime DateCreated { get; set; } = DateTime.Now;
 
-    public DateTime? DateUpdated { get; set; }
-
     [Required]
-    public bool IsPublic { get; set; } = false;
+    public DateTime DateUpdated { get; set; } = DateTime.Now;
+
 
     // Navigation properties
-    // [ForeignKey("AuthorId")]
-    // public virtual ApplicationUser Author { get; set; }  // The user who created the recipe
-    
+
+    [ForeignKey("AuthorId")]
+    public virtual User Author { get; set; }
+
+    [ForeignKey("RecipeId")]
     public virtual ICollection<Ingredient> Ingredients { get; set; } = new List<Ingredient>();
-    
+
+    [ForeignKey("RecipeId")]
     public virtual ICollection<PreparationStep> PreparationSteps { get; set; } = new List<PreparationStep>();
-    
-    public virtual ICollection<AllergicIngredient> AllergicIngredients { get; set; } = new List<AllergicIngredient>();
-    
-    public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();  // Comments on the recipe
-    
-    public virtual ICollection<Rating> Ratings { get; set; } = new List<Rating>();  // Ratings for the recipe
+
+    [ForeignKey("RecipeId")]
+    public virtual ICollection<Comment> Comments { get; set; } = new List<Comment>();
+
+    [ForeignKey("RecipeId")]
+    public virtual ICollection<Rating> Ratings { get; set; } = new List<Rating>();
 
 }
