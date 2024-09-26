@@ -4,14 +4,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Blog.Models;
 
-[PrimaryKey("RecipeId", "UserId")]
 public class Rating
 {
     [ForeignKey("Recipe")]
     public int RecipeId { get; set; }
 
     [ForeignKey("User")]
-    public int UserId { get; set; }
+    public string UserId { get; set; }
     
     [Required, Range(1, 5)]
     public int RatingValue { get; set; }
@@ -24,5 +23,8 @@ public class Rating
 
     // Navigation properties
     [ForeignKey("UserId")]
-    public virtual User User { get; set; }  // The user who gave the rating
+    public virtual User User { get; set; }
+    
+    [ForeignKey("RecipeId")]
+    public virtual Recipe Recipe { get; set; }
 }

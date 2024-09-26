@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Blog.Models;
 
-[PrimaryKey("RecipeId", "AuthorId")]
 public class Comment
 {
     [ForeignKey("Recipe")]
@@ -22,4 +21,7 @@ public class Comment
     // Navigation properties
     [ForeignKey("UserId")]
     public virtual User Author { get; set; }
+    
+    [ForeignKey("RecipeId")]
+    public virtual Recipe Recipe { get; set; }
 }

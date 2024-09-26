@@ -20,5 +20,36 @@ namespace Blog.Data
         public DbSet<Rating> Ratings { get; set; }
 
 
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            builder.Entity<Comment>().HasKey(c => new { c.RecipeId, c.AuthorId });
+            builder.Entity<Rating>().HasKey(r => new { r.RecipeId, r.UserId });
+            
+            builder.Entity<Recipe>()
+                .HasMany(r => r.Ingredients)
+                .WithOne(i => i.Recipe)
+                .HasForeignKey(i => i.RecipeId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            builder.Entity<Recipe>()
+                .HasMany(r => r.PreparationSteps)
+                .WithOne(p => p.Recipe)
+                .HasForeignKey(p => p.RecipeId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            builder.Entity<Recipe>()
+                .HasMany(r => r.Comments)
+                .WithOne(c => c.Recipe)
+                .HasForeignKey(c => c.RecipeId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            builder.Entity<Recipe>()
+                .HasMany(r => r.Ratings)
+                .WithOne(r => r.Recipe)
+                .HasForeignKey(r => r.RecipeId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            base.OnModelCreating(builder);
+        }
     }
 }
