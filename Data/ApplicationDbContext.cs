@@ -49,6 +49,31 @@ namespace Blog.Data
                 .HasForeignKey(r => r.RecipeId)
                 .OnDelete(DeleteBehavior.Cascade);
             
+            builder.Entity<Rating>()
+                .HasOne(r => r.Recipe)
+                .WithMany(r => r.Ratings)
+                .HasForeignKey(r => r.RecipeId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            builder.Entity<Rating>()
+                .HasOne(r => r.User)
+                .WithMany(u => u.Ratings)
+                .HasForeignKey(r => r.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            builder.Entity<Comment>()
+                .HasOne(c => c.Recipe)
+                .WithMany(r => r.Comments)
+                .HasForeignKey(c => c.RecipeId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            builder.Entity<Comment>()
+                .HasOne(c => c.Author)
+                .WithMany(u => u.Comments)
+                .HasForeignKey(c => c.AuthorId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            
             base.OnModelCreating(builder);
         }
     }

@@ -22,9 +22,6 @@ public class Rating
     public DateTime DateUpdated { get; set; } = DateTime.Now;
 
     // Navigation properties
-    [ForeignKey("UserId")]
     public virtual User User { get; set; }
-    
-    [ForeignKey("RecipeId")]
     public virtual Recipe Recipe { get; set; }
 }

@@ -9,7 +9,6 @@ public class Comment
     [ForeignKey("Recipe")]
     public int RecipeId { get; set; }
     
-    [ForeignKey("User")]
     public string AuthorId { get; set; }
     
     [Required, MaxLength(500)]
@@ -19,9 +18,6 @@ public class Comment
     public DateTime DateUpdated { get; set; } = DateTime.Now;
 
     // Navigation properties
-    [ForeignKey("UserId")]
     public virtual User Author { get; set; }
-    
-    [ForeignKey("RecipeId")]
     public virtual Recipe Recipe { get; set; }
 }

@@ -20,6 +20,5 @@ public class Ingredient
     [Required]
     public bool IsAllergen { get; set; }
     
-    [ForeignKey("RecipeId")]
     public virtual Recipe Recipe { get; set; }
 }

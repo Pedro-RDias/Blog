@@ -14,5 +14,5 @@ public class PreparationStep
 
     [Required] public string Description { get; set; }
 
-    [ForeignKey("RecipeId")] public virtual Recipe Recipe { get; set; }
+    public virtual Recipe Recipe { get; set; }
 }
