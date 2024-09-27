@@ -1,6 +1,4 @@
-﻿using Blog.Models;
-using Humanizer;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Blog.Data
@@ -18,8 +16,8 @@ namespace Blog.Data
         public DbSet<PreparationStep> PreparationSteps { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Rating> Ratings { get; set; }
-        
-        
+
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<Recipe>()
@@ -38,20 +36,26 @@ namespace Blog.Data
                 .HasMany(r => r.Comments)
                 .WithOne(c => c.Recipe)
                 .HasForeignKey(c => c.RecipeId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<Recipe>()
                 .HasMany(r => r.Ratings)
                 .WithOne(r => r.Recipe)
                 .HasForeignKey(r => r.RecipeId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<Comment>()
                 .HasOne(c => c.Author)
                 .WithMany(u => u.Comments)
                 .HasForeignKey(c => c.AuthorId)
                 .OnDelete(DeleteBehavior.Cascade);
-            
+
+            builder.Entity<Rating>()
+                .HasOne(r => r.User)
+                .WithMany(u => u.Ratings)
+                .HasForeignKey(r => r.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             base.OnModelCreating(builder);
         }
     }
