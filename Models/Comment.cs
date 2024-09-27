@@ -6,9 +6,13 @@ namespace Blog.Models;
 
 public class Comment
 {
+    [Key]
+    public int Id { get; set; }
+    
     [ForeignKey("Recipe")]
     public int RecipeId { get; set; }
     
+    [ForeignKey("User")]
     public string AuthorId { get; set; }
     
     [Required, MaxLength(500)]
