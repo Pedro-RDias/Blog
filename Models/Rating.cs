@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Blog.Models;
 
+
+[PrimaryKey("RecipeId", "UserId")]
 public class Rating
 {
     [ForeignKey("Recipe")]

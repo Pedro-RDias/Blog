@@ -22,9 +22,6 @@ namespace Blog.Data
         
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            builder.Entity<Comment>().HasKey(c => new { c.RecipeId, c.AuthorId });
-            builder.Entity<Rating>().HasKey(r => new { r.RecipeId, r.UserId });
-
             builder.Entity<Recipe>()
                 .HasMany(r => r.Ingredients)
                 .WithOne(i => i.Recipe)
@@ -41,37 +38,13 @@ namespace Blog.Data
                 .HasMany(r => r.Comments)
                 .WithOne(c => c.Recipe)
                 .HasForeignKey(c => c.RecipeId)
-                .OnDelete(DeleteBehavior.Restrict); // Change to Restrict
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<Recipe>()
                 .HasMany(r => r.Ratings)
                 .WithOne(r => r.Recipe)
                 .HasForeignKey(r => r.RecipeId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder.Entity<Rating>()
-                .HasOne(r => r.Recipe)
-                .WithMany(r => r.Ratings)
-                .HasForeignKey(r => r.RecipeId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder.Entity<Rating>()
-                .HasOne(r => r.User)
-                .WithMany(u => u.Ratings)
-                .HasForeignKey(r => r.UserId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder.Entity<Comment>()
-                .HasOne(c => c.Recipe)
-                .WithMany(r => r.Comments)
-                .HasForeignKey(c => c.RecipeId)
-                .OnDelete(DeleteBehavior.Restrict); // Change to Restrict
-
-            builder.Entity<Comment>()
-                .HasOne(c => c.Author)
-                .WithMany(u => u.Comments)
-                .HasForeignKey(c => c.AuthorId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             base.OnModelCreating(builder);
         }

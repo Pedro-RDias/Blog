@@ -18,6 +18,10 @@ public class Comment
     [Required, MaxLength(500)]
     public string Content { get; set; }
 
+
+    [ForeignKey("Comment")]
+    public int ReplyToId { get; set; }
+
     public DateTime DateCreated { get; set; } = DateTime.Now;
     public DateTime DateUpdated { get; set; } = DateTime.Now;
 
