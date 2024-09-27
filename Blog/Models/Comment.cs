@@ -14,7 +14,7 @@ public class Comment
     // Foreign keys
     [Required, ForeignKey("Recipe")] public int RecipeId { get; set; }
     [Required, ForeignKey("User")] public string AuthorId { get; set; }
-    [ForeignKey("Comment")] public int ReplyToId { get; set; }
+    [ForeignKey("Comment")] public int? ReplyToId { get; set; }
 
     // Timestamps
     public DateTime DateCreated { get; set; } = DateTime.Now;
