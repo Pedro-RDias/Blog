@@ -4,7 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>aspnet-Blog-ba431f87-1aba-4e86-aace-4dc2467f1979</UserSecretsId>
+    <UserSecretsId>aspnet-Blog-309aaf72-f166-45ec-89ac-1fb962c92000</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,6 +13,10 @@
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Models\ApplicationDbContext.cs" />
   </ItemGroup>
 
 </Project>
