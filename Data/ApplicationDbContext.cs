@@ -46,6 +46,12 @@ namespace Blog.Data
                 .HasForeignKey(r => r.RecipeId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            builder.Entity<Comment>()
+                .HasOne(c => c.Author)
+                .WithMany(u => u.Comments)
+                .HasForeignKey(c => c.AuthorId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
             base.OnModelCreating(builder);
         }
     }

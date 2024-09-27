@@ -25,10 +25,7 @@ public class Recipe
     [Required, ForeignKey("User")]
     public string AuthorId { get; set; }
 
-    [Required]
     public DateTime DateCreated { get; set; } = DateTime.Now;
-
-    [Required]
     public DateTime DateUpdated { get; set; } = DateTime.Now;
 
 
