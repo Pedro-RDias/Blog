@@ -53,6 +53,14 @@ namespace Blog.Data
                 .HasForeignKey(c => c.AuthorId)
                 .OnDelete(DeleteBehavior.Cascade);
             
+            builder.Entity<Comment>()
+                .HasMany(c => c.Replies)
+                .WithOne()
+                .HasForeignKey(c => c.ReplyToId)
+                .OnDelete(DeleteBehavior.Restrict);
+            
+            
+            
             base.OnModelCreating(builder);
         }
         

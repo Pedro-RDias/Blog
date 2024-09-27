@@ -23,5 +23,5 @@ public class Comment
     // Navigation properties
     public virtual User Author { get; set; }
     public virtual Recipe Recipe { get; set; }
-    public virtual Comment ReplyTo { get; set; }
+    public virtual ICollection<Comment> Replies { get; set; }
 }
