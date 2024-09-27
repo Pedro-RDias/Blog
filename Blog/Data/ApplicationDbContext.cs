@@ -10,17 +10,10 @@ namespace Blog.Data
             : base(options)
         {
         }
-
-        // Add DbSet properties here
-        public DbSet<Recipe> Recipes { get; set; }
-        public DbSet<Ingredient> Ingredients { get; set; }
-        public DbSet<PreparationStep> PreparationSteps { get; set; }
-        public DbSet<Comment> Comments { get; set; }
-        public DbSet<Rating> Ratings { get; set; }
-
-
+        
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            // Recipe
             builder.Entity<Recipe>()
                 .HasMany(r => r.Ingredients)
                 .WithOne(i => i.Recipe)
@@ -44,20 +37,29 @@ namespace Blog.Data
                 .WithOne(r => r.Recipe)
                 .HasForeignKey(r => r.RecipeId)
                 .OnDelete(DeleteBehavior.Restrict);
-
-            builder.Entity<Comment>()
-                .HasOne(c => c.Author)
-                .WithMany(u => u.Comments)
-                .HasForeignKey(c => c.AuthorId)
-                .OnDelete(DeleteBehavior.Cascade);
-
+            
+            
+            // Rating
             builder.Entity<Rating>()
                 .HasOne(r => r.User)
                 .WithMany(u => u.Ratings)
                 .HasForeignKey(r => r.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            // Comment
+            builder.Entity<Comment>()
+                .HasOne(c => c.Author)
+                .WithMany(u => u.Comments)
+                .HasForeignKey(c => c.AuthorId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
             base.OnModelCreating(builder);
         }
+        
+        public DbSet<Recipe> Recipes { get; set; }
+        public DbSet<Ingredient> Ingredients { get; set; }
+        public DbSet<PreparationStep> PreparationSteps { get; set; }
+        public DbSet<Comment> Comments { get; set; }
+        public DbSet<Rating> Ratings { get; set; }
     }
 }
