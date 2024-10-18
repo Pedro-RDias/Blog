@@ -35,6 +35,18 @@ using (var scope = app.Services.CreateScope())
         }
     }
 
+    // Create admin user on startup
+    var adminEmail = "admin@example.com";
+    var adminUser = await userManager.FindByEmailAsync(adminEmail);
+    if (adminUser == null)
+    {
+        adminUser = new User { UserName = adminEmail, Email = adminEmail, FirstName = "Admin", LastName = "" };
+        await userManager.CreateAsync(adminUser, "Admin@12345"); // Change this to environment variable
+        await userManager.AddToRoleAsync(adminUser, Roles.Admin);
+        var token = await userManager.GenerateEmailConfirmationTokenAsync(adminUser);
+        await userManager.ConfirmEmailAsync(adminUser, token);
+    }
+
 }
 
 
