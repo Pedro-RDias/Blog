@@ -21,7 +21,7 @@ public class Recipe
     public DateTime DateUpdated { get; set; } = DateTime.Now;
     
     // Navigation properties
-    [ForeignKey("AuthorId")] public virtual User Author { get; set; }
+    [ForeignKey("AuthorId")] public virtual User? Author { get; set; }
     [ForeignKey("RecipeId")] public virtual ICollection<Ingredient> Ingredients { get; set; } = new List<Ingredient>();
 
     [ForeignKey("RecipeId")]
