@@ -1,8 +1,54 @@
-﻿@{
+﻿@model Blog.ViewModels.RecipesViewIndexModel
+@using System.Globalization
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<main class="container">
+    <div class="row">
+        <section class="col-12 col-md-8 col-lg-10">
+            @foreach (var item in Model.Recipes)
+            {
+                <div class="card mb-3" style="max-width: 540px;">
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            <img src="https://images.unsplash.com/photo-1617054240991-b0ffce6600da?q=80&w=1885&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" class="img-fluid rounded-start" alt="...">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    @Html.DisplayFor(modelItem => item.Title)
+                                    <span class="badge text-bg-secondary">@Html.DisplayFor(modelItem => item.Category)</span>
+                                </h5>
+                                <p class="card-text">@Html.DisplayFor(modelItem => item.Summary)</p>
+                                <p class="card-text">
+
+                                    <small class="text-body-secondary">Created: @Html.DisplayFor(modelItem => item.DateCreated)</small>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </section>
+        <section class="col-12 col-md-4 col-lg-2">
+            <ul class="nav flex-column">
+                <ul class="nav flex-column">
+                    @foreach (var year in Model.Dates.Keys)
+                    {
+                        <li class="nav-item">
+                            <strong>@year</strong>
+                            <ul>
+                                @foreach (var month in Model.Dates[year])
+                                {
+                                    <li>@CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month)</li>
+                                }
+                            </ul>
+                        </li>
+                    }
+                </ul>
+            </ul>
+        </section>
+    </div>
+</main>
