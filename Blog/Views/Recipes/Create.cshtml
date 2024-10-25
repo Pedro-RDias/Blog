@@ -1,5 +1,7 @@
 ﻿@using Blog.Data.Enums
+@using System.Text.Json
 @model Blog.ViewModels.RecipeViewModel
+
 @{
     ViewData["Title"] = "Create Recipe";
 }
@@ -43,8 +45,8 @@
     <button type="button" id="addStepBtn" class="btn btn-secondary mt-2">Add Step</button>
 
     <!-- Hidden inputs for ingredients and steps -->
-    <input type="hidden" id="ingredientsJson" name="IngredientsJson"/>
-    <input type="hidden" id="stepsJson" name="StepsJson"/>
+    <input type="hidden" id="ingredientsJson" name="IngredientsJson" value="@(Model?.Ingredients != null ? JsonSerializer.Serialize(Model.Ingredients) : "")" />
+    <input type="hidden" id="stepsJson" name="StepsJson" value="@(Model?.PreparationSteps != null ? JsonSerializer.Serialize(Model.PreparationSteps) : "")" />
 
     <div class="form-group mt-3">
         <input type="submit" value="Create" class="btn btn-primary"/>

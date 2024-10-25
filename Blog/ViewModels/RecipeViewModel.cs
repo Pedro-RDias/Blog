@@ -22,6 +22,7 @@ public class RecipeViewModel
 
 public class IngredientViewModel
 {
+    public int? IngredientId { get; set; }
     public string Name { get; set; }
     public string Quantity { get; set; }
     public bool IsAllergen { get; set; }
@@ -34,7 +35,8 @@ public class IngredientViewModel
 
 public class PreparationStepViewModel
 {
-    public int StepNumber { get; set; }
+    public int? StepId { get; set; }
+    public uint StepNumber { get; set; }
     public string Description { get; set; }
 
     public override string ToString()

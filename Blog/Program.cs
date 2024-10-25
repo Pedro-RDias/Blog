@@ -46,7 +46,6 @@ using (var scope = app.Services.CreateScope())
         var token = await userManager.GenerateEmailConfirmationTokenAsync(adminUser);
         await userManager.ConfirmEmailAsync(adminUser, token);
     }
-
 }
 
 

@@ -1,8 +1,8 @@
-﻿@model Blog.Models.Recipe
+﻿@using Blog.Data.Enums
+@using System.Text.Json
+@model Blog.ViewModels.RecipeViewModel
 
-@{
-    ViewData["Title"] = "Edit";
-}
+@{ ViewData["Title"] = "Edit Recipe"; }
 
 <h1>Edit</h1>
 
@@ -10,12 +10,11 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="Edit" id="recipeForm">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
             <div class="form-group">
                 <label asp-for="Title" class="control-label"></label>
-                <input asp-for="Title" class="form-control" />
+                <input asp-for="Title" class="form-control"/>
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -24,69 +23,40 @@
                 <span asp-validation-for="Summary" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Diet" class="control-label"></label>
-                <select asp-for="Diet" asp-items="@(ViewData["Diet"] as IEnumerable<SelectListItem>)" class="form-control"></select>
-                <span asp-validation-for="Diet" class="text-danger"></span>
+                <label asp-for="Category" class="control-label"></label>
+                <select asp-for="Category" asp-items="Html.GetEnumSelectList<Category>()" class="form-control">
+                    <option selected="selected" value="">Please select</option>
+                </select>
+                <span asp-validation-for="Category" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Category" class="control-label"></label>
-                <select asp-for="Category" asp-items="@(ViewData["Category"] as IEnumerable<SelectListItem>)" class="form-control"></select>
-                <span asp-validation-for="Category" class="text-danger"></span>
+                <label asp-for="Diet" class="control-label"></label>
+                <select asp-for="Diet" asp-items="Html.GetEnumSelectList<Diet>()" class="form-control">
+                    <option selected="selected" value="">Please select</option>
+                </select>
+                <span asp-validation-for="Diet" class="text-danger"></span>
             </div>
 
             <!-- Ingredients Section -->
             <h4>Ingredients</h4>
-            <div id="ingredients">
-                @{
-                    var index = 0;
-                }
-
-                @foreach (var ingredient in Model.Ingredients)
-                {
-                    <input type="hidden" name="Ingredients[@index].Id" value="@ingredient.IngredientId" />
-                    <div class="form-group">
-                        <label>Name</label>
-                        <input name="Ingredients[@index].Name" class="form-control" value="@ingredient.Name" />
-                    </div>
-                    <div class="form-group">
-                        <label>Quantity</label>
-                        <input name="Ingredients[@index].Quantity" class="form-control" value="@ingredient.Quantity" />
-                    </div>
-                    <div class="form-group">
-                        <label>Is Allergen</label>
-                        <input type="checkbox" name="Ingredients[@index].IsAllergen" @(ingredient.IsAllergen ? "checked" : "") />
-                    </div>
-                    index++;
-                }
-            </div>
-            <button type="button" onclick="addIngredient()">Add Ingredient</button>
+            <div id="ingredients"></div>
+            <button type="button" id="addIngredientBtn" class="btn btn-secondary mt-2">Add Ingredient</button>
 
             <!-- Preparation Steps Section -->
             <h4>Preparation Steps</h4>
-            <div id="steps">
-                @{
-                    index = 0;
-                }
+            <div id="steps"></div>
+            <button type="button" id="addStepBtn" class="btn btn-secondary mt-2">Add Step</button>
 
-                @foreach (var step in Model.PreparationSteps)
-                {
-                    <input type="hidden" name="PreparationSteps[@index].Id" value="@step.StepId" />
-                    <div class="form-group">
-                        <label>Step Number</label>
-                        <input name="PreparationSteps[@index].StepNumber" class="form-control" value="@step.StepNumber" readonly />
-                    </div>
-                    <div class="form-group">
-                        <label>Description</label>
-                        <input name="PreparationSteps[@index].Description" class="form-control" value="@step.Description" />
-                    </div>
-                    index++;
-                }
-            </div>
+            @{
+            var ingredientsJson = JsonSerializer.Serialize(Model.Ingredients);
+            var stepsJson = JsonSerializer.Serialize(Model.PreparationSteps);
+            }
+            <input type="hidden" id="ingredientsJson" name="IngredientsJson" value="@ingredientsJson" />
+            <input type="hidden" id="stepsJson" name="StepsJson" value="@stepsJson" />
 
-            <button type="button" onclick="addStep()">Add Step</button>
 
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Save" class="btn btn-primary"/>
             </div>
         </form>
     </div>
@@ -97,44 +67,6 @@
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-
-    <script>
-        let ingredientIndex = @Model.Ingredients.Count;
-        let stepIndex = @Model.PreparationSteps.Count;
-
-        function addIngredient() {
-            const ingredientsDiv = document.getElementById('ingredients');
-            const newIngredient = `
-                <div class="form-group">
-                    <label>Name</label>
-                    <input name="Ingredients[${++ingredientIndex}].Name" class="form-control" />
-                </div>
-                <div class="form-group">
-                    <label>Quantity</label>
-                    <input name="Ingredients[${ingredientIndex}].Quantity" class="form-control" />
-                </div>
-                <div class="form-group">
-                    <label>Is Allergen</label>
-                    <input type="checkbox" name="Ingredients[${ingredientIndex}].IsAllergen" />
-                </div>`;
-            ingredientsDiv.insertAdjacentHTML('beforeend', newIngredient);
-        }
-
-        function addStep() {
-            const stepsDiv = document.getElementById('steps');
-            const newStep = `
-                <div class="form-group">
-                    <label>Step Number</label>
-                    <input name="PreparationSteps[${++stepIndex}].StepNumber" class="form-control" value="${stepIndex + 1}" readonly />
-                </div>
-                <div class="form-group">
-                    <label>Description</label>
-                    <input name="PreparationSteps[${stepIndex}].Description" class="form-control" />
-                </div>`;
-            stepsDiv.insertAdjacentHTML('beforeend', newStep);
-        }
-    </script>
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    <script src="~/js/updateRecipeForm.js"></script>
 }

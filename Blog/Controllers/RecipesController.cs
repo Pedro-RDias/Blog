@@ -1,10 +1,8 @@
 ﻿using Blog.Data;
-using Blog.Data.Enums;
 using Blog.Models;
 using Blog.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
@@ -39,6 +37,10 @@ public class RecipesController : Controller
 
         var recipe = await _context.Recipes
             .Include(r => r.Author)
+            .Include(r => r.Comments)
+            .Include(r => r.Ratings)
+            .Include(r => r.Ingredients)
+            .Include(r => r.PreparationSteps)
             .FirstOrDefaultAsync(m => m.Id == id);
         if (recipe == null) return NotFound();
 
@@ -84,8 +86,8 @@ public class RecipesController : Controller
             return RedirectToAction(nameof(Index));
         }
 
-        // If we got this far, something failed; redisplay form
-
+        viewModel.Ingredients = ingredients;
+        viewModel.PreparationSteps = steps;
 
         return View(viewModel);
     }
@@ -94,7 +96,6 @@ public class RecipesController : Controller
     public async Task<IActionResult> Edit(int? id)
     {
         if (id == null) return NotFound();
-
         var recipe = await _context.Recipes
             .Include(r => r.Ingredients)
             .Include(r => r.PreparationSteps)
@@ -102,29 +103,145 @@ public class RecipesController : Controller
 
         if (recipe == null) return NotFound();
 
+        var recipeVm = new RecipeViewModel
+        {
+            Id = recipe.Id,
+            Title = recipe.Title,
+            Summary = recipe.Summary,
+            Category = recipe.Category,
+            Diet = recipe.Diet,
+        };
 
-        // Get Diets And Categories From Enum
-        var diets = from Diet d in Enum.GetValues(typeof(Diet))
-            select new { ID = (int)d, Name = d.ToString() };
-        ViewData["Diet"] = new SelectList(diets, "ID", "Name", recipe.Diet);
+        foreach (var ingredient in recipe.Ingredients)
+        {
+            recipeVm.Ingredients.Add(new IngredientViewModel
+            {
+                IngredientId = ingredient.IngredientId,
+                Name = ingredient.Name,
+                Quantity = ingredient.Quantity,
+                IsAllergen = ingredient.IsAllergen,
+            });
+        }
 
-        var categories = from Category c in Enum.GetValues(typeof(Category))
-            select new { ID = (int)c, Name = c.ToString() };
-        ViewData["Category"] = new SelectList(categories, "ID", "Name", recipe.Category);
+        foreach (var step in recipe.PreparationSteps)
+        {
+            recipeVm.PreparationSteps.Add(new PreparationStepViewModel
+            {
+                StepId = step.StepId,
+                StepNumber = step.StepNumber,
+                Description = step.Description,
+            });
+        }
 
-        return View(recipe);
+        foreach (var ingredient in recipeVm.Ingredients)
+        {
+            Console.WriteLine(ingredient);
+        }
+
+        foreach (var sep in recipeVm.PreparationSteps)
+        {
+            Console.WriteLine(sep);
+        }
+
+        return View(recipeVm);
     }
 
     // POST: Recipes/Edit/5
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int id,
-        [Bind("Id,Title,Summary,Category,Diet,Ingredients,PreparationSteps")]
-        Recipe recipe)
+    public async Task<IActionResult> Edit(int id, RecipeViewModel viewModel, string IngredientsJson, string StepsJson)
     {
-        return View(recipe);
-    }
+        if (id != viewModel.Id)
+        {
+            return NotFound();
+        }
 
+        // First, get the existing recipe with its related data
+        var existingRecipe = await _context.Recipes
+            .Include(r => r.Ingredients)
+            .Include(r => r.PreparationSteps)
+            .FirstOrDefaultAsync(r => r.Id == id);
+
+        if (existingRecipe == null)
+        {
+            return NotFound();
+        }
+
+        // Update preparation steps
+        var newSteps = JsonConvert.DeserializeObject<List<PreparationStepViewModel>>(StepsJson);
+        // Update ingredients
+        var newIngredients = JsonConvert.DeserializeObject<List<IngredientViewModel>>(IngredientsJson);
+
+        if (ModelState.IsValid)
+        {
+            try
+            {
+                // Update basic recipe information
+                existingRecipe.Title = viewModel.Title;
+                existingRecipe.Summary = viewModel.Summary;
+                existingRecipe.Category = viewModel.Category;
+                existingRecipe.Diet = viewModel.Diet;
+                
+                // Remove all existing ingredients
+                existingRecipe.Ingredients.Clear();
+
+                // Add updated ingredients
+                foreach (var ingredientVM in newIngredients)
+                {
+                    existingRecipe.Ingredients.Add(new Ingredient
+                    {
+                        Name = ingredientVM.Name,
+                        Quantity = ingredientVM.Quantity,
+                        IsAllergen = ingredientVM.IsAllergen,
+                        RecipeId = existingRecipe.Id
+                    });
+                }
+                
+                // Remove all existing steps
+                existingRecipe.PreparationSteps.Clear();
+
+                // Add updated steps
+                foreach (var stepVM in newSteps.OrderBy(s => s.StepNumber))
+                {
+                    existingRecipe.PreparationSteps.Add(new PreparationStep
+                    {
+                        StepNumber = stepVM.StepNumber,
+                        Description = stepVM.Description,
+                        RecipeId = existingRecipe.Id
+                    });
+                }
+
+                _context.Update(existingRecipe);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!RecipeExists(viewModel.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log the exception
+                Console.WriteLine($"Error updating recipe: {ex.Message}");
+                ModelState.AddModelError("", "An error occurred while saving the recipe. Please try again.");
+            }
+        }
+
+        // If we got this far, something failed, redisplay form
+        // Repopulate the lists before returning the view
+        viewModel.Ingredients = newIngredients ?? new List<IngredientViewModel>();
+        viewModel.PreparationSteps = newSteps ?? new List<PreparationStepViewModel>();
+
+        return View(viewModel);
+    }
+    
     // GET: Recipes/Delete/5
     public async Task<IActionResult> Delete(int? id)
     {
@@ -154,33 +271,5 @@ public class RecipesController : Controller
     private bool RecipeExists(int id)
     {
         return _context.Recipes.Any(e => e.Id == id);
-    }
-
-
-    private SelectList GetEnumSelectList<TEnum>()
-    {
-        var values = Enum.GetValues(typeof(TEnum))
-            .Cast<TEnum>()
-            .Select(e => new { Value = e, Text = e.ToString() })
-            .ToList();
-
-        return new SelectList(values, "Value", "Text");
-    }
-
-    private SelectList GetEnumSelectList<TEnum>(TEnum selected)
-    {
-        var values = Enum.GetValues(typeof(TEnum))
-            .Cast<TEnum>()
-            .Select(e => new { Value = e, Text = e.ToString() })
-            .ToList();
-
-        return new SelectList(values, "Value", "Text", selected);
-    }
-
-    private void LogModelErrors()
-    {
-        foreach (var modelState in ModelState.Values)
-        foreach (var error in modelState.Errors)
-            Console.WriteLine(error.ErrorMessage);
     }
 }
