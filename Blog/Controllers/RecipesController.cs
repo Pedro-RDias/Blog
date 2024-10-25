@@ -56,38 +56,36 @@ public class RecipesController : Controller
     {
         var ingredients = JsonConvert.DeserializeObject<List<IngredientViewModel>>(IngredientsJson);
         var steps = JsonConvert.DeserializeObject<List<PreparationStepViewModel>>(StepsJson);
-        Console.WriteLine(ingredients.Count());
-        Console.WriteLine(steps.Count());
         if (ModelState.IsValid)
         {
-            //     var recipe = new Recipe
-            //     {
-            //         Title = viewModel.Title,
-            //         Summary = viewModel.Summary,
-            //         Category = viewModel.Category,
-            //         Diet = viewModel.Diet,
-            //         AuthorId = _userManager.GetUserId(User),
-            //         Ingredients = ingredients.Select(i => new Ingredient
-            //         {
-            //             Name = i.Name,
-            //             Quantity = i.Quantity,
-            //             IsAllergen = i.IsAllergen
-            //         }).ToList(),
-            //         PreparationSteps = steps.Select(s => new PreparationStep
-            //         {
-            //             StepNumber = (uint)s.StepNumber,
-            //             Description = s.Description
-            //         }).ToList()
-            //     };
-            //
-            //     _context.Recipes.Add(recipe);
-            //     await _context.SaveChangesAsync();
-            //
-            //     return RedirectToAction(nameof(Index));
-            // }
+            var recipe = new Recipe
+            {
+                Title = viewModel.Title,
+                Summary = viewModel.Summary,
+                Category = viewModel.Category,
+                Diet = viewModel.Diet,
+                AuthorId = _userManager.GetUserId(User),
+                Ingredients = ingredients.Select(i => new Ingredient
+                {
+                    Name = i.Name,
+                    Quantity = i.Quantity,
+                    IsAllergen = i.IsAllergen
+                }).ToList(),
+                PreparationSteps = steps.Select(s => new PreparationStep
+                {
+                    StepNumber = (uint)s.StepNumber,
+                    Description = s.Description
+                }).ToList()
+            };
 
-            // If we got this far, something failed; redisplay form
+            _context.Recipes.Add(recipe);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
+
+        // If we got this far, something failed; redisplay form
+
 
         return View(viewModel);
     }
