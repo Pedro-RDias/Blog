@@ -1,203 +1,186 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Blog.Data;
+using Blog.Data.Enums;
+using Blog.Models;
+using Blog.ViewModels;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Blog.Data;
-using Blog.Models;
-using Blog.Data.Enums;
+using Newtonsoft.Json;
 
-namespace Blog.Controllers
+namespace Blog.Controllers;
+
+public class RecipesController : Controller
 {
-    public class RecipesController : Controller
+    private readonly ApplicationDbContext _context;
+    private readonly UserManager<User> _userManager;
+
+
+    public RecipesController(
+        ApplicationDbContext context,
+        UserManager<User> userManager
+    )
     {
-        private readonly ApplicationDbContext _context;
+        _context = context;
+        _userManager = userManager;
+    }
 
-        public RecipesController(ApplicationDbContext context)
+    // GET: Recipes
+    public async Task<IActionResult> Index()
+    {
+        var applicationDbContext = _context.Recipes.Include(r => r.Author);
+        return View(await applicationDbContext.ToListAsync());
+    }
+
+    // GET: Recipes/Details/5
+    public async Task<IActionResult> Details(int? id)
+    {
+        if (id == null) return NotFound();
+
+        var recipe = await _context.Recipes
+            .Include(r => r.Author)
+            .FirstOrDefaultAsync(m => m.Id == id);
+        if (recipe == null) return NotFound();
+
+        return View(recipe);
+    }
+
+    public IActionResult Create()
+    {
+        return View(new RecipeViewModel());
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Create(RecipeViewModel viewModel, string IngredientsJson, string StepsJson)
+    {
+        var ingredients = JsonConvert.DeserializeObject<List<IngredientViewModel>>(IngredientsJson);
+        var steps = JsonConvert.DeserializeObject<List<PreparationStepViewModel>>(StepsJson);
+        if (ModelState.IsValid)
         {
-            _context = context;
-        }
-
-        // GET: Recipes
-        public async Task<IActionResult> Index()
-        {
-            var applicationDbContext = _context.Recipes.Include(r => r.Author);
-            return View(await applicationDbContext.ToListAsync());
-        }
-
-        // GET: Recipes/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
+            var recipe = new Recipe
             {
-                return NotFound();
-            }
-
-            var recipe = await _context.Recipes
-                .Include(r => r.Author)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (recipe == null)
-            {
-                return NotFound();
-            }
-
-            return View(recipe);
-        }
-
-        // GET: Recipes/Create
-        public IActionResult Create()
-        {
-            ViewData["AuthorId"] = new SelectList(_context.Users, "Id", "Id");
-
-            var diets = from Diet d in Enum.GetValues(typeof(Diet))
-                        select new { ID = (int)d, Name = d.ToString() };
-
-            ViewData["Diet"] = new SelectList(diets, "ID", "Name");
-
-            var categories = from Category c in Enum.GetValues(typeof(Category))
-                             select new { ID = (int)c, Name = c.ToString() };
-
-            ViewData["Category"] = new SelectList(categories, "ID", "Name");
-
-            return View();
-        }
-
-        // POST: Recipes/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Summary,Category,Diet")] Recipe recipe)
-        {
-
-            // ADD Loged user id
-            if (ModelState.IsValid)
-            {
-                var dNow = new DateTime();
-                recipe.DateCreated = dNow;
-                recipe.DateUpdated = dNow;
-                _context.Add(recipe);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            //ViewData["AuthorId"] = new SelectList(_context.Users, "Id", "Id", recipe.AuthorId);
-            return View(recipe);
-        }
-
-        // GET: Recipes/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var recipe = await _context.Recipes.FindAsync(id);
-            if (recipe == null)
-            {
-                return NotFound();
-            }
-            ViewData["AuthorId"] = new SelectList(_context.Users, "Id", "Id", recipe.AuthorId);
-
-            var diets = from Diet d in Enum.GetValues(typeof(Diet))
-                        select new { ID = (int)d, Name = d.ToString() };
-
-            ViewData["Diet"] = new SelectList(diets, "ID", "Name", recipe.Diet);
-
-            var categories = from Category c in Enum.GetValues(typeof(Category))
-                             select new { ID = (int)c, Name = c.ToString() };
-
-            ViewData["Category"] = new SelectList(categories, "ID", "Name", recipe.Category);
-
-
-            return View(recipe);
-        }
-
-        // POST: Recipes/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Summary,Category,Diet,AuthorId,DateCreated,DateUpdated")] Recipe recipe)
-        {
-            // Check if user is admin or creator
-            if (id != recipe.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
+                Title = viewModel.Title,
+                Summary = viewModel.Summary,
+                Category = viewModel.Category,
+                Diet = viewModel.Diet,
+                AuthorId = _userManager.GetUserId(User),
+                Ingredients = ingredients.Select(i => new Ingredient
                 {
-                    recipe.DateUpdated = new DateTime();
-                    _context.Update(recipe);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
+                    Name = i.Name,
+                    Quantity = i.Quantity,
+                    IsAllergen = i.IsAllergen
+                }).ToList(),
+                PreparationSteps = steps.Select(s => new PreparationStep
                 {
-                    if (!RecipeExists(recipe.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["AuthorId"] = new SelectList(_context.Users, "Id", "Id", recipe.AuthorId);
+                    StepNumber = (uint)s.StepNumber,
+                    Description = s.Description
+                }).ToList()
+            };
 
-
-            var diets = from Diet d in Enum.GetValues(typeof(Diet))
-                        select new { ID = (int)d, Name = d.ToString() };
-
-            ViewData["Diet"] = new SelectList(diets, "ID", "Name", recipe.Diet);
-
-            var categories = from Category c in Enum.GetValues(typeof(Category))
-                             select new { ID = (int)c, Name = c.ToString() };
-
-            ViewData["Category"] = new SelectList(categories, "ID", "Name", recipe.Category);
-
-            return View(recipe);
-        }
-
-        // GET: Recipes/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var recipe = await _context.Recipes
-                .Include(r => r.Author)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (recipe == null)
-            {
-                return NotFound();
-            }
-
-            return View(recipe);
-        }
-
-        // POST: Recipes/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var recipe = await _context.Recipes.FindAsync(id);
-            if (recipe != null)
-            {
-                _context.Recipes.Remove(recipe);
-            }
-
+            _context.Recipes.Add(recipe);
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 
-        private bool RecipeExists(int id)
-        {
-            return _context.Recipes.Any(e => e.Id == id);
-        }
+        // If we got this far, something failed; redisplay form
+
+
+        return View(viewModel);
+    }
+
+    // GET: Recipes/Edit/5
+    public async Task<IActionResult> Edit(int? id)
+    {
+        if (id == null) return NotFound();
+
+        var recipe = await _context.Recipes
+            .Include(r => r.Ingredients)
+            .Include(r => r.PreparationSteps)
+            .FirstOrDefaultAsync(r => r.Id == id);
+
+        if (recipe == null) return NotFound();
+
+
+        // Get Diets And Categories From Enum
+        var diets = from Diet d in Enum.GetValues(typeof(Diet))
+            select new { ID = (int)d, Name = d.ToString() };
+        ViewData["Diet"] = new SelectList(diets, "ID", "Name", recipe.Diet);
+
+        var categories = from Category c in Enum.GetValues(typeof(Category))
+            select new { ID = (int)c, Name = c.ToString() };
+        ViewData["Category"] = new SelectList(categories, "ID", "Name", recipe.Category);
+
+        return View(recipe);
+    }
+
+    // POST: Recipes/Edit/5
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(int id,
+        [Bind("Id,Title,Summary,Category,Diet,Ingredients,PreparationSteps")]
+        Recipe recipe)
+    {
+        return View(recipe);
+    }
+
+    // GET: Recipes/Delete/5
+    public async Task<IActionResult> Delete(int? id)
+    {
+        if (id == null) return NotFound();
+
+        var recipe = await _context.Recipes
+            .Include(r => r.Author)
+            .FirstOrDefaultAsync(m => m.Id == id);
+        if (recipe == null) return NotFound();
+
+        return View(recipe);
+    }
+
+    // POST: Recipes/Delete/5
+    [HttpPost]
+    [ActionName("Delete")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteConfirmed(int id)
+    {
+        var recipe = await _context.Recipes.FindAsync(id);
+        if (recipe != null) _context.Recipes.Remove(recipe);
+
+        await _context.SaveChangesAsync();
+        return RedirectToAction(nameof(Index));
+    }
+
+    private bool RecipeExists(int id)
+    {
+        return _context.Recipes.Any(e => e.Id == id);
+    }
+
+
+    private SelectList GetEnumSelectList<TEnum>()
+    {
+        var values = Enum.GetValues(typeof(TEnum))
+            .Cast<TEnum>()
+            .Select(e => new { Value = e, Text = e.ToString() })
+            .ToList();
+
+        return new SelectList(values, "Value", "Text");
+    }
+
+    private SelectList GetEnumSelectList<TEnum>(TEnum selected)
+    {
+        var values = Enum.GetValues(typeof(TEnum))
+            .Cast<TEnum>()
+            .Select(e => new { Value = e, Text = e.ToString() })
+            .ToList();
+
+        return new SelectList(values, "Value", "Text", selected);
+    }
+
+    private void LogModelErrors()
+    {
+        foreach (var modelState in ModelState.Values)
+        foreach (var error in modelState.Errors)
+            Console.WriteLine(error.ErrorMessage);
     }
 }

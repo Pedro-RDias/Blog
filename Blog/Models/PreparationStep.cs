@@ -14,5 +14,5 @@ public class PreparationStep
     [Required, ForeignKey("Recipe")] public int RecipeId { get; set; }
     
     // Navigation properties
-    public virtual Recipe Recipe { get; set; }
+    public virtual Recipe? Recipe { get; set; }
 }
