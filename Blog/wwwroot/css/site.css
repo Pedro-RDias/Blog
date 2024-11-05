@@ -25,3 +25,14 @@ body {
   resize: none !important;
 }
 
+.nav-pills .nav-link.active {
+  background-color: rgba(240,90,40, 0.2); /* Replace with your desired color */
+  border-color: rgba(240,90,40, 0.2);
+  color: black; /* Adjust text color as needed */
+}
+
+.btn-primary, .btn-primary:hover, .btn-primary:active, .btn-primary:visited {
+  background-color:rgba(240,90,40, 0.2);
+  color:black;
+  border-color: rgba(240,90,40, 0.2);
+}
