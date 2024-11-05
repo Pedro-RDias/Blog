@@ -8,8 +8,7 @@
 <div class="container mt-5">
     <h1 class="text-center mb-4">Create Recipe</h1>
     <hr/>
-
-    <!-- Aplicando o estilo border, rounded, p-4, bg-light -->
+    
     <form asp-action="Create" method="post" id="recipeForm" class="border rounded p-4 bg-light">
         <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
@@ -57,7 +56,7 @@
                         <!-- Ingredients will be added dynamically here -->
                     </div>
                     <div class="text-start">
-                        <button type="button" id="addIngredientBtn" class="btn btn-secondary" style="background-color: #F05A28; border-color: #F05A28;">Add Ingredient</button>
+                        <button type="button" id="addIngredientBtn" class="btn btn-secondary" style="background-color: rgba(240,90,40, 0.2); border-color: rgba(240,90,40, 0.2); color: black;">Add Ingredient</button>
                     </div>
                 </div>
 
@@ -68,7 +67,7 @@
                         <!-- Steps will be added dynamically here -->
                     </div>
                     <div class="text-start">
-                        <button type="button" id="addStepBtn" class="btn btn-secondary" style="background-color: #F05A28; border-color: #F05A28;">Add Step</button>
+                        <button type="button" id="addStepBtn" class="btn btn-secondary" style="background-color: rgba(240,90,40, 0.2); border-color: rgba(240,90,40, 0.2); color: black;">Add Step</button>
                     </div>
                 </div>
             </div>
