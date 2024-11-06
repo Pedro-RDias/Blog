@@ -36,3 +36,35 @@ body {
   color:black;
   border-color: rgba(240,90,40, 0.2);
 }
+
+.button-container {
+  display: flex;
+  gap: 10px; /* Ajusta o espaço entre os botões */
+  align-items: center;
+}
+
+/* Estilo do Alerta */
+.alert {
+  background-color: rgba(240,90,40, 0.1); /* Fundo laranja suave para mensagens gerais */
+  color: black; /* Texto em preto para boa legibilidade */
+}
+
+.alert-success {
+  background-color: rgba(142,168,61, 0.1); /* Fundo verde claro para sucesso */
+  border-color: #8ea83d;
+}
+
+.alert-danger {
+  background-color: rgba(240,90,40, 0.1); /* Fundo laranja claro para erros */
+  border-color: rgba(240,90,40, 0.2);
+}
+
+/* Borda arredondada e sombra leve */
+.alert-dismissible {
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.alert p {
+  font-size: 1.1rem;
+}
