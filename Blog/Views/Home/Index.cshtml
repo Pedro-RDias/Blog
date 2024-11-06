@@ -1,11 +1,32 @@
-﻿@model Blog.ViewModels.RecipesViewIndexModel
-@using System.Globalization
+﻿@using System.Globalization
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model Blog.Controllers.RecipesViewIndexModel
 
 @{
     ViewData["Title"] = "Home Page";
 }
 
 <main class="container">
+    <div class="row mb-4">
+        <div class="col-12">
+            <form method="get" class="d-flex gap-2">
+                <input type="hidden" name="PageNumber" value="1"/>
+                <input type="hidden" name="Month" value="@Model.FilterParams.Month"/>
+                <input type="hidden" name="Year" value="@Model.FilterParams.Year"/>
+                <input type="text"
+                       name="SearchTerm"
+                       value="@Model.SearchTerm"
+                       class="form-control"
+                       placeholder="Search recipes..."/>
+                <button type="submit" class="btn btn-primary">Search</button>
+                @if (!string.IsNullOrEmpty(Model.SearchTerm) || Model.CurrentMonth.HasValue)
+                {
+                    <a asp-action="Index" class="btn btn-secondary">Clear Filters</a>
+                }
+            </form>
+        </div>
+    </div>
+
     <div class="row">
         <section class="col-12 col-md-8 col-lg-10">
             @foreach (var item in Model.Recipes)
@@ -13,7 +34,9 @@
                 <div class="card mb-3" style="max-width: 540px;">
                     <div class="row g-0">
                         <div class="col-md-4">
-                            <img src="https://images.unsplash.com/photo-1617054240991-b0ffce6600da?q=80&w=1885&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" class="img-fluid rounded-start" alt="...">
+                            <img src="https://images.unsplash.com/photo-1617054240991-b0ffce6600da?q=80&w=1885&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                                 class="img-fluid rounded-start"
+                                 alt="Recipe image">
                         </div>
                         <div class="col-md-8">
                             <div class="card-body">
@@ -23,7 +46,6 @@
                                 </h5>
                                 <p class="card-text">@Html.DisplayFor(modelItem => item.Summary)</p>
                                 <p class="card-text">
-
                                     <small class="text-body-secondary">Created: @Html.DisplayFor(modelItem => item.DateCreated)</small>
                                 </p>
                             </div>
@@ -31,25 +53,68 @@
                     </div>
                 </div>
             }
-        </section>
-        <section class="col-12 col-md-4 col-lg-2">
-            <ul class="nav flex-column">
-                <ul class="nav flex-column">
-                    @foreach (var year in Model.Dates.Keys)
+
+            @if (Model.Recipes.Count == 0)
+            {
+                <div class="alert alert-info">
+                    No recipes found matching your criteria.
+                </div>
+            }
+
+            <nav aria-label="Recipe pagination">
+                <ul class="pagination">
+                    @if (Model.Recipes.HasPreviousPage)
                     {
-                        <li class="nav-item">
-                            <strong>@year</strong>
-                            <ul>
-                                @foreach (var month in Model.Dates[year])
-                                {
-                                    <li>
-                                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index" asp-route-month="@month" asp-route-year="@year">@CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month)</a>
-                                    </li>
-                                }
-                            </ul>
+                        <li class="page-item">
+                            <a class="page-link"
+                               asp-action="Index"
+                               asp-route-pageNumber="@(Model.Recipes.PageIndex - 1)"
+                               asp-route-searchTerm="@Model.SearchTerm"
+                               asp-route-month="@Model.CurrentMonth"
+                               asp-route-year="@Model.CurrentYear">
+                                Previous
+                            </a>
+                        </li>
+                    }
+                    @if (Model.Recipes.HasNextPage)
+                    {
+                        <li class="page-item">
+                            <a class="page-link"
+                               asp-action="Index"
+                               asp-route-pageNumber="@(Model.Recipes.PageIndex + 1)"
+                               asp-route-searchTerm="@Model.SearchTerm"
+                               asp-route-month="@Model.CurrentMonth"
+                               asp-route-year="@Model.CurrentYear">
+                                Next
+                            </a>
                         </li>
                     }
                 </ul>
+            </nav>
+        </section>
+
+        <section class="col-12 col-md-4 col-lg-2">
+            <ul class="nav flex-column">
+                @foreach (var year in Model.Dates.Keys.OrderByDescending(y => y))
+                {
+                    <li class="nav-item">
+                        <strong>@year</strong>
+                        <ul class="list-unstyled ms-3">
+                            @foreach (var month in Model.Dates[year].OrderByDescending(m => m))
+                            {
+                                <li>
+                                    <a class="nav-link @(Model.CurrentMonth == month && Model.CurrentYear == year ? "active" : "")"
+                                       asp-action="Index"
+                                       asp-route-month="@month"
+                                       asp-route-year="@year"
+                                       asp-route-searchTerm="@Model.SearchTerm">
+                                        @CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month)
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </li>
+                }
             </ul>
         </section>
     </div>
