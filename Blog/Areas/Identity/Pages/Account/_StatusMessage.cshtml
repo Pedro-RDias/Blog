@@ -1,10 +1,17 @@
 ﻿@model string
 
-@if (!String.IsNullOrEmpty(Model))
-{
-    var statusMessageClass = Model.StartsWith("Error") ? "danger" : "success";
-    <div class="alert alert-@statusMessageClass alert-dismissible" role="alert">
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        @Model
-    </div>
-}
+<div class="container mt-5">
+    @if (!String.IsNullOrEmpty(Model))
+    {
+        var statusMessageClass = Model.StartsWith("Error") ? "danger" : "success";
+        <div class="alert alert-@statusMessageClass alert-dismissible fade show" role="alert">
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            @Model
+        </div>
+        
+        <!-- Botão de Redirecionamento -->
+        <div class="text-center mt-4">
+            <a href="@Url.Action("Index", "Home")" class="btn btn-primary">Go to Home</a> <!-- Substitua pela página de destino desejada -->
+        </div>
+    }
+</div>
