@@ -1,0 +1,59 @@
+﻿@model User
+
+@{
+    ViewData["Title"] = "User Details";
+    var roles = ViewBag.UserRoles as IEnumerable<string>;
+}
+
+<h1>User Details</h1>
+
+<div>
+    <h4>User</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.FirstName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.FirstName)
+        </dd>
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.LastName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.LastName)
+        </dd>
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+
+        <dt class="col-sm-2">
+            Roles
+        </dt>
+        <dd class="col-sm-10">
+            @if (roles != null && roles.Any())
+            {
+                <div class="d-flex flex-wrap gap-1">
+                    @foreach (var role in roles)
+                    {
+                        <span class="badge bg-primary">@role</span>
+                    }
+                </div>
+            }
+            else
+            {
+                <span class="text-muted">No roles assigned</span>
+            }
+        </dd>
+    </dl>
+
+    <div class="mt-3">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit Roles</a>
+        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+    </div>
+</div>

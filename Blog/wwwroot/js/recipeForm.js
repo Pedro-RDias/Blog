@@ -90,9 +90,11 @@ document.addEventListener('DOMContentLoaded', function () {
         this.submit();
     });
 
-    // If there are no ingredients/steps added yet, populate from hidden fields
-    if (document.querySelectorAll('#ingredients > div').length === 0 && 
+    // Populate data from hidden fields if there are no ingredients/steps added yet
+    if (document.querySelectorAll('#ingredients > div').length === 0 &&
         document.querySelectorAll('#steps > div').length === 0) {
         populateFormData();
     }
-});
+}
+
+);

@@ -1,30 +1,70 @@
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
 }
 
-footer {
-  background: #EB8317
+.step-description {
+    resize: none !important;
 }
 
-nav {
-  background-color: #F3C623
+.nav-pills .nav-link.active {
+    background-color: rgba(240, 90, 40, 0.2); /* Replace with your desired color */
+    border-color: rgba(240, 90, 40, 0.2);
+    color: black; /* Adjust text color as needed */
+}
+
+.btn-primary, .btn-primary:hover, .btn-primary:active, .btn-primary:visited {
+    background-color: rgba(240, 90, 40, 0.2);
+    color: black;
+    border-color: rgba(240, 90, 40, 0.2);
+}
+
+.button-container {
+    display: flex;
+    gap: 10px; /* Ajusta o espaço entre os botões */
+    align-items: center;
+}
+
+/* Estilo do Alerta */
+.alert {
+    background-color: rgba(240, 90, 40, 0.1); /* Fundo laranja suave para mensagens gerais */
+    color: black; /* Texto em preto para boa legibilidade */
+}
+
+.alert-success {
+    background-color: rgba(142, 168, 61, 0.1); /* Fundo verde claro para sucesso */
+    border-color: #8ea83d;
+}
+
+.alert-danger {
+    background-color: rgba(240, 90, 40, 0.1); /* Fundo laranja claro para erros */
+    border-color: rgba(240, 90, 40, 0.2);
+}
+
+/* Borda arredondada e sombra leve */
+.alert-dismissible {
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.alert p {
+    font-size: 1.1rem;
 }

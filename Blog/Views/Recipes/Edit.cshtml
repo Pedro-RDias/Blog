@@ -2,68 +2,91 @@
 @using System.Text.Json
 @model Blog.ViewModels.RecipeViewModel
 
-@{ ViewData["Title"] = "Edit Recipe"; }
+@{
+    ViewData["Title"] = "Edit Recipe";
+}
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Edit Recipe</h1>
+    <hr/>
 
-<h1>Edit</h1>
+    <!-- Aplicando a classe border rounded p-4 bg-light ao formulário -->
+    <form asp-action="Edit" method="post" id="recipeForm" class="border rounded p-4 bg-light">
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-<h4>Recipe</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit" id="recipeForm">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Title" class="control-label"></label>
-                <input asp-for="Title" class="form-control"/>
-                <span asp-validation-for="Title" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Summary" class="control-label"></label>
-                <textarea asp-for="Summary" class="form-control"></textarea>
-                <span asp-validation-for="Summary" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Category" class="control-label"></label>
-                <select asp-for="Category" asp-items="Html.GetEnumSelectList<Category>()" class="form-control">
-                    <option selected="selected" value="">Please select</option>
+        <!-- Recipe Title -->
+        <div class="form-group">
+            <label asp-for="Title" class="control-label">Recipe Title</label>
+            <input asp-for="Title" class="form-control" placeholder="Enter recipe title" maxlength="150"/>
+            <small class="form-text text-muted">Max 150 characters.</small>
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+
+        <!-- Category and Diet Selection -->
+        <div class="row my-3">
+            <div class="col-md-6 form-group">
+                <label asp-for="Category" class="control-label">Category</label>
+                <select asp-for="Category" asp-items="Html.GetEnumSelectList<Category>()" class="form-select">
+                    <option selected="selected" value="">Please select a category</option>
                 </select>
                 <span asp-validation-for="Category" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Diet" class="control-label"></label>
-                <select asp-for="Diet" asp-items="Html.GetEnumSelectList<Diet>()" class="form-control">
-                    <option selected="selected" value="">Please select</option>
+            <div class="col-md-6 form-group">
+                <label asp-for="Diet" class="control-label">Diet</label>
+                <select asp-for="Diet" asp-items="Html.GetEnumSelectList<Diet>()" class="form-select">
+                    <option selected="selected" value="">Please select a diet type</option>
                 </select>
                 <span asp-validation-for="Diet" class="text-danger"></span>
             </div>
+        </div>
 
-            <!-- Ingredients Section -->
-            <h4>Ingredients</h4>
-            <div id="ingredients"></div>
-            <button type="button" id="addIngredientBtn" class="btn btn-secondary mt-2">Add Ingredient</button>
+        <!-- Recipe Summary -->
+        <div class="form-group mb-2"> 
+            <label asp-for="Summary" class="control-label">Summary</label>
+            <textarea asp-for="Summary" class="form-control" placeholder="Brief description of the recipe" maxlength="500"
+                      style="resize: none; height: 100px;"></textarea>
+            <small class="form-text text-muted">Max 500 characters.</small>
+            <span asp-validation-for="Summary" class="text-danger"></span>
+        </div>
 
-            <!-- Preparation Steps Section -->
-            <h4>Preparation Steps</h4>
-            <div id="steps"></div>
-            <button type="button" id="addStepBtn" class="btn btn-secondary mt-2">Add Step</button>
+        <div class="container mt-3"> 
+            <div class="row">
+                <!-- Ingredients Column -->
+                <div class="col-md-6">
+                    <h4 class="my-4">Ingredients</h4>
+                    <div id="ingredients" class="border rounded p-3 mb-3 bg-light">
+                        <!-- Ingredients will be added dynamically here -->
+                    </div>
+                    <div class="text-start">
+                        <button type="button" id="addIngredientBtn" class="btn btn-secondary" style="background-color: rgba(240,90,40, 0.2); border-color: rgba(240,90,40, 0.2); color: black;">Add Ingredient</button>
+                    </div>
+                </div>
 
-            @{
+                <!-- Preparation Steps Column -->
+                <div class="col-md-6">
+                    <h4 class="my-4">Preparation Steps</h4>
+                    <div id="steps" class="border rounded p-3 mb-3 bg-light">
+                        <!-- Steps will be added dynamically here -->
+                    </div>
+                    <div class="text-start">
+                        <button type="button" id="addStepBtn" class="btn btn-secondary" style="background-color: rgba(240,90,40, 0.2); border-color: rgba(240,90,40, 0.2); color: black;">Add Step</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hidden Inputs for Ingredients and Steps JSON -->
+        @{
             var ingredientsJson = JsonSerializer.Serialize(Model.Ingredients);
             var stepsJson = JsonSerializer.Serialize(Model.PreparationSteps);
-            }
-            <input type="hidden" id="ingredientsJson" name="IngredientsJson" value="@ingredientsJson" />
-            <input type="hidden" id="stepsJson" name="StepsJson" value="@stepsJson" />
-
-
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary"/>
-            </div>
-        </form>
-    </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
+        }
+        <input type="hidden" id="ingredientsJson" name="IngredientsJson" value="@ingredientsJson" />
+        <input type="hidden" id="stepsJson" name="StepsJson" value="@stepsJson" />
+        
+        <div class="text-end mt-4">
+            <a asp-action="Index" class="btn btn-outline-secondary me-2">Back to List</a>
+            <input type="submit" value="Save Changes" class="btn btn-primary" style="background-color: #8ea83d; border-color: #8ea83d;"/>
+        </div>
+    </form>
 </div>
 
 @section Scripts {
