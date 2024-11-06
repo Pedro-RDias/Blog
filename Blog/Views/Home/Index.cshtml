@@ -42,7 +42,9 @@
                             <ul>
                                 @foreach (var month in Model.Dates[year])
                                 {
-                                    <li>@CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month)</li>
+                                    <li>
+                                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index" asp-route-month="@month" asp-route-year="@year">@CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month)</a>
+                                    </li>
                                 }
                             </ul>
                         </li>

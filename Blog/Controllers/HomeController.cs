@@ -18,7 +18,7 @@ namespace Blog.Controllers
             _logger = logger;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int month, int year)
         {
             var recipes = await _context.Recipes
                 .Include(r => r.Author)
@@ -26,6 +26,7 @@ namespace Blog.Controllers
                 .Include(r => r.Ratings)
                 .Include(r => r.Ingredients)
                 .Include(r => r.PreparationSteps)
+                .AsQueryable()
                 .OrderByDescending(r => r.DateCreated)
                 .ToListAsync();
             
