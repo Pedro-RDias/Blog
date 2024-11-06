@@ -65,6 +65,7 @@ namespace Blog.Data
         }
         
         public DbSet<Recipe> Recipes { get; set; }
+        // public DbSet<User> Users { get; set; }
         public DbSet<Ingredient> Ingredients { get; set; }
         public DbSet<PreparationStep> PreparationSteps { get; set; }
         public DbSet<Comment> Comments { get; set; }
