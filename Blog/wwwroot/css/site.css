@@ -31,10 +31,16 @@ body {
   color: black; /* Adjust text color as needed */
 }
 
-.btn-primary, .btn-primary:hover, .btn-primary:active, .btn-primary:visited {
+.btn-primary {
   background-color:rgba(240,90,40, 0.2);
   color:black;
   border-color: rgba(240,90,40, 0.2);
+}
+
+.btn-primary:hover {
+  background-color: #f3bb7a; /* Substitua pela cor desejada */
+  border-color: #f3bb7a; /* Ajusta a borda para combinar com o fundo */
+  color: black;
 }
 
 .button-container {
@@ -67,4 +73,24 @@ body {
 
 .alert p {
   font-size: 1.1rem;
+}
+
+/* Container da tabela com bordas arredondadas e contorno cinza */
+.table-container {
+  border-radius: 8px; /* Bordas arredondadas */
+  border: 1px solid #000000; /* Contorno cinza */
+  overflow: hidden; /* Garante o arredondamento nas bordas */
+}
+
+/* Remover margem inferior da tabela para manter o arredondamento do container */
+.table {
+  margin-bottom: 0;
+}
+
+.btn-danger {
+  color: black !important; /* Texto preto em todos os botões danger */
+}
+
+.btn {
+  transition: all 0.2s ease-in-out; /* Aplica a transição a qualquer mudança no botão */
 }
