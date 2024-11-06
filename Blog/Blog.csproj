@@ -24,4 +24,12 @@
     <Compile Remove="Models\ApplicationDbContext.cs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <AdditionalFiles Include="Views\Users\Create.cshtml" />
+    <AdditionalFiles Include="Views\Users\Delete.cshtml" />
+    <AdditionalFiles Include="Views\Users\Details.cshtml" />
+    <AdditionalFiles Include="Views\Users\Edit.cshtml" />
+    <AdditionalFiles Include="Views\Users\Index.cshtml" />
+  </ItemGroup>
+
 </Project>
