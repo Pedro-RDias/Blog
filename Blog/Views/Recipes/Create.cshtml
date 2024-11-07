@@ -1,5 +1,5 @@
-﻿@using Blog.Data.Enums
-@using System.Text.Json
+﻿@using System.Text.Json
+@using Blog.Data.Enums
 @model Blog.ViewModels.RecipeViewModel
 
 @{
@@ -8,7 +8,7 @@
 <div class="container mt-5">
     <h1 class="text-center mb-4">Create Recipe</h1>
     <hr/>
-    
+
     <form asp-action="Create" method="post" id="recipeForm" class="border rounded p-4 bg-light">
         <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
@@ -39,7 +39,7 @@
         </div>
 
         <!-- Recipe Summary -->
-        <div class="form-group mb-2"> 
+        <div class="form-group mb-2">
             <label asp-for="Summary" class="control-label">Summary</label>
             <textarea asp-for="Summary" class="form-control" placeholder="Brief description of the recipe" maxlength="500"
                       style="resize: none; height: 100px;"></textarea>
@@ -47,7 +47,7 @@
             <span asp-validation-for="Summary" class="text-danger"></span>
         </div>
 
-        <div class="container mt-3"> 
+        <div class="container mt-3">
             <div class="row">
                 <!-- Ingredients Column -->
                 <div class="col-md-6">
@@ -73,10 +73,21 @@
             </div>
         </div>
 
+        <!-- Photos -->
+        <div class="form-group">
+            <label>Recipe Photos</label>
+            <div id="photoUploadContainer">
+                <div class="photo-upload-row mb-3">
+                    <input type="file" name="photoFiles" class="form-control" accept="image/*"/>
+                </div>
+            </div>
+            <button type="button" class="btn btn-secondary" onclick="addPhotoUpload()">Add Another Photo</button>
+        </div>
+
         <!-- Hidden Inputs for Ingredients and Steps JSON -->
-        <input type="hidden" id="ingredientsJson" name="IngredientsJson" value="@(Model?.Ingredients != null ? JsonSerializer.Serialize(Model.Ingredients) : "")" />
-        <input type="hidden" id="stepsJson" name="StepsJson" value="@(Model?.PreparationSteps != null ? JsonSerializer.Serialize(Model.PreparationSteps) : "")" />
-        
+        <input type="hidden" id="ingredientsJson" name="IngredientsJson" value="@(Model?.Ingredients != null ? JsonSerializer.Serialize(Model.Ingredients) : "")"/>
+        <input type="hidden" id="stepsJson" name="StepsJson" value="@(Model?.PreparationSteps != null ? JsonSerializer.Serialize(Model.PreparationSteps) : "")"/>
+
         <!-- Botões de Ação -->
         <div class="text-end mt-4">
             <a asp-action="Index" class="btn btn-outline-secondary me-2">Back to List</a>
