@@ -72,6 +72,7 @@ public class HomeController : Controller
             .Include(r => r.Ratings)
             .Include(r => r.Ingredients)
             .Include(r => r.PreparationSteps)
+            .Include(r => r.Photos)
             .AsQueryable();
 
         // Apply search filter

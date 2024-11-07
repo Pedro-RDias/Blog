@@ -89,15 +89,3 @@ document.addEventListener('DOMContentLoaded', function () {
         populateFormData();
     }
 });
-
-
-function addPhotoUpload() {
-    const container = document.getElementById('photoUploadContainer');
-    const newRow = document.createElement('div');
-    newRow.className = 'photo-upload-row mb-3';
-    newRow.innerHTML = `
-        <input type="file" name="photoFiles" class="form-control" accept="image/*" />
-    `;
-    container.appendChild(newRow);
-}
-

@@ -9,7 +9,7 @@
     <h1 class="text-center mb-4">Create Recipe</h1>
     <hr/>
 
-    <form asp-action="Create" method="post" id="recipeForm" class="border rounded p-4 bg-light">
+    <form asp-action="Create" method="post" id="recipeForm" class="border rounded p-4 bg-light" enctype="multipart/form-data">
         <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
         <!-- Recipe Title -->
@@ -78,10 +78,9 @@
             <label>Recipe Photos</label>
             <div id="photoUploadContainer">
                 <div class="photo-upload-row mb-3">
-                    <input type="file" name="photoFiles" class="form-control" accept="image/*"/>
+                    <input type="file" name="photoFiles" class="form-control" accept="image/*" asp-for="Photos" multiple required/>
                 </div>
             </div>
-            <button type="button" class="btn btn-secondary" onclick="addPhotoUpload()">Add Another Photo</button>
         </div>
 
         <!-- Hidden Inputs for Ingredients and Steps JSON -->

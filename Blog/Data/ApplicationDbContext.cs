@@ -51,7 +51,7 @@ public class ApplicationDbContext : IdentityDbContext<User>
             .HasMany(r => r.Photos)
             .WithOne(c => c.Recipe)
             .HasForeignKey(c => c.RecipeId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
 
         // Rating
         builder.Entity<Rating>()
