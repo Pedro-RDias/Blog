@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Blog.Controllers;
 
@@ -24,6 +25,7 @@ public class RecipesController : Controller
     }
 
     // GET: Recipes
+    [Authorize(Roles = "Admin,Moderator")]
     public async Task<IActionResult> Index()
     {
         var applicationDbContext = _context.Recipes.Include(r => r.Author);
@@ -48,11 +50,13 @@ public class RecipesController : Controller
         return View(recipe);
     }
 
+    [Authorize(Roles = "Admin,Moderator")]
     public IActionResult Create()
     {
         return View(new RecipeViewModel());
     }
 
+    [Authorize(Roles = "Admin,Moderator")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(RecipeViewModel viewModel, string IngredientsJson, string StepsJson,
@@ -68,6 +72,7 @@ public class RecipesController : Controller
                 Summary = viewModel.Summary,
                 Category = viewModel.Category,
                 Diet = viewModel.Diet,
+                Published = viewModel.Published,
                 AuthorId = _userManager.GetUserId(User),
                 Ingredients = ingredients.Select(i => new Ingredient
                 {
@@ -123,6 +128,7 @@ public class RecipesController : Controller
     }
 
     // GET: Recipes/Edit/5
+    [Authorize(Roles = "Admin,Moderator")]
     public async Task<IActionResult> Edit(int? id)
     {
         if (id == null) return NotFound();
@@ -141,6 +147,7 @@ public class RecipesController : Controller
             Summary = recipe.Summary,
             Category = recipe.Category,
             Diet = recipe.Diet,
+            Published = recipe.Published,
             Photos = recipe.Photos.Select(p => new PhotoViewModel
             {
                 Id = p.Id,
@@ -176,6 +183,7 @@ public class RecipesController : Controller
     }
 
     // POST: Recipes/Edit/5
+    [Authorize(Roles = "Admin,Moderator")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(int id, RecipeViewModel viewModel, string IngredientsJson, string StepsJson,
@@ -205,6 +213,8 @@ public class RecipesController : Controller
                 existingRecipe.Summary = viewModel.Summary;
                 existingRecipe.Category = viewModel.Category;
                 existingRecipe.Diet = viewModel.Diet;
+                existingRecipe.Published = viewModel.Published;
+                
 
                 // Remove all existing ingredients
                 existingRecipe.Ingredients.Clear();
@@ -302,6 +312,7 @@ public class RecipesController : Controller
     }
 
     // GET: Recipes/Delete/5
+    [Authorize(Roles = "Admin,Moderator")]
     public async Task<IActionResult> Delete(int? id)
     {
         if (id == null) return NotFound();
@@ -315,6 +326,7 @@ public class RecipesController : Controller
     }
 
     // POST: Recipes/Delete/5
+    [Authorize(Roles = "Admin,Moderator")]
     [HttpPost]
     [ActionName("Delete")]
     [ValidateAntiForgeryToken]

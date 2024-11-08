@@ -12,6 +12,8 @@ public class RecipeViewModel
     public List<IngredientViewModel> Ingredients { get; set; } = new();
     public List<PreparationStepViewModel> PreparationSteps { get; set; } = new();
 
+    public bool Published { get; set; }
+
     public List<PhotoViewModel> Photos { get; set; } = new();
     public List<IFormFile> NewPhotos { get; set; } = new();
 

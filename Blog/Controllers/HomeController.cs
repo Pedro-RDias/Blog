@@ -74,6 +74,7 @@ public class HomeController : Controller
             .Include(r => r.Ingredients)
             .Include(r => r.PreparationSteps)
             .Include(r => r.Photos)
+            .Where(r => r.Published) // Add this line to filter published recipes
             .AsQueryable();
 
         // Apply search filter

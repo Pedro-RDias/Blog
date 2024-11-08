@@ -20,6 +20,8 @@ public class Recipe
     public DateTime DateCreated { get; set; } = DateTime.Now;
     public DateTime DateUpdated { get; set; } = DateTime.Now;
 
+    public bool Published { get; set; } = false;
+
     // Navigation properties
     [ForeignKey("AuthorId")] public virtual User? Author { get; set; }
     [ForeignKey("RecipeId")] public virtual ICollection<Ingredient> Ingredients { get; set; } = new List<Ingredient>();
