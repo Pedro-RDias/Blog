@@ -63,8 +63,11 @@
         </dl>
     </div>
     
-    <div class="text-end mt-4">
-        <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary me-2" style="background-color: #8ea83d; border-color: #8ea83d;">Edit</a>
-        <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
-    </div>
+    @if (User.IsInRole("Admin") || User.IsInRole("Moderator"))
+    {
+        <div class="text-end mt-4">
+            <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary me-2" style="background-color: #8ea83d; border-color: #8ea83d;">Edit</a>
+            <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
+        </div>
+    }
 </div>
