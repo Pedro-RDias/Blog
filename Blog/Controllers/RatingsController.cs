@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Blog.Data;
 using Blog.Models;
+using System.Security.Claims;
 
 namespace Blog.Controllers
 {
@@ -21,102 +17,60 @@ namespace Blog.Controllers
             _context = context;
         }
 
-        // GET: api/Ratings
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Rating>>> GetRatings()
+        [HttpGet("{recipeId}")]
+        public async Task<ActionResult<double>> GetRecipeRating(int recipeId)
         {
-            return await _context.Ratings.ToListAsync();
+            var ratings = await _context.Ratings
+                .Where(r => r.RecipeId == recipeId)
+                .Select(r => r.RatingValue)
+                .ToListAsync();
+
+            if (!ratings.Any())
+                return 0;
+
+            return ratings.Average();
         }
 
-        // GET: api/Ratings/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Rating>> GetRating(int id)
-        {
-            var rating = await _context.Ratings.FindAsync(id);
-
-            if (rating == null)
-            {
-                return NotFound();
-            }
-
-            return rating;
-        }
-
-        // PUT: api/Ratings/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutRating(int id, Rating rating)
-        {
-            if (id != rating.RecipeId)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(rating).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!RatingExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/Ratings
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Rating>> PostRating(Rating rating)
+        public async Task<IActionResult> PostRating([FromBody] RatingRequest request)
         {
-            _context.Ratings.Add(rating);
-            try
+            if (request == null || request.RecipeId == 0 || request.RatingValue < 1 || request.RatingValue > 5)
+                return BadRequest("Invalid rating data");
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+                return Unauthorized();
+
+            var rating = new Rating
             {
-                await _context.SaveChangesAsync();
+                RecipeId = request.RecipeId,
+                RatingValue = request.RatingValue,
+                UserId = userId,
+                DateCreated = DateTime.Now,
+                DateUpdated = DateTime.Now
+            };
+
+            var existingRating = await _context.Ratings
+                .FirstOrDefaultAsync(r => r.RecipeId == rating.RecipeId && r.UserId == userId);
+
+            if (existingRating != null)
+            {
+                existingRating.RatingValue = rating.RatingValue;
+                existingRating.DateUpdated = DateTime.Now;
             }
-            catch (DbUpdateException)
+            else
             {
-                if (RatingExists(rating.RecipeId))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
+                _context.Ratings.Add(rating);
             }
 
-            return CreatedAtAction("GetRating", new { id = rating.RecipeId }, rating);
-        }
-
-        // DELETE: api/Ratings/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteRating(int id)
-        {
-            var rating = await _context.Ratings.FindAsync(id);
-            if (rating == null)
-            {
-                return NotFound();
-            }
-
-            _context.Ratings.Remove(rating);
             await _context.SaveChangesAsync();
-
-            return NoContent();
+            return Ok();
         }
 
-        private bool RatingExists(int id)
+        public class RatingRequest
         {
-            return _context.Ratings.Any(e => e.RecipeId == id);
+            public int RecipeId { get; set; }
+            public int RatingValue { get; set; }
         }
     }
 }

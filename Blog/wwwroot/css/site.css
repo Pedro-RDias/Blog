@@ -133,3 +133,17 @@ h6.fw-bold {
 .custom-close-button:hover {
   background-color: #c82333; /* Um tom mais escuro de vermelho ao passar o mouse */
 }
+
+.rating {
+  font-size: 2em;
+  color: #FFD700;
+}
+
+.star {
+  cursor: pointer;
+}
+
+.star:hover,
+.star:hover ~ .star {
+  color: #FFA500;
+}
