@@ -54,7 +54,8 @@ public class RecipesController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(RecipeViewModel viewModel, string IngredientsJson, string StepsJson)
+    public async Task<IActionResult> Create(RecipeViewModel viewModel, string IngredientsJson, string StepsJson,
+        List<IFormFile> photoFiles)
     {
         var ingredients = JsonConvert.DeserializeObject<List<IngredientViewModel>>(IngredientsJson);
         var steps = JsonConvert.DeserializeObject<List<PreparationStepViewModel>>(StepsJson);
@@ -73,12 +74,40 @@ public class RecipesController : Controller
                     Quantity = i.Quantity,
                     IsAllergen = i.IsAllergen
                 }).ToList(),
-                PreparationSteps = steps.Select(s => new PreparationStep
+                PreparationSteps = steps.Select((s, index) => new PreparationStep
                 {
-                    StepNumber = (uint)s.StepNumber,
+                    StepNumber = (uint)index + 1,
                     Description = s.Description
                 }).ToList()
             };
+
+            // Handle photo uploads
+            if (photoFiles != null && photoFiles.Any())
+            {
+                recipe.Photos = new List<Photo>();
+                foreach (var file in photoFiles)
+                    if (file.Length > 0)
+                    {
+                        // Generate unique filename
+                        var fileName = $"{Guid.NewGuid()}_{file.FileName}";
+                        var filePath = Path.Combine("wwwroot", "uploads", "recipes", fileName);
+
+                        // Ensure directory exists
+                        Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+
+                        // Save file
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await file.CopyToAsync(stream);
+                        }
+
+                        // Create photo record
+                        recipe.Photos.Add(new Photo
+                        {
+                            ImagePath = $"/uploads/recipes/{fileName}"
+                        });
+                    }
+            }
 
             _context.Recipes.Add(recipe);
             await _context.SaveChangesAsync();
@@ -99,6 +128,7 @@ public class RecipesController : Controller
         var recipe = await _context.Recipes
             .Include(r => r.Ingredients)
             .Include(r => r.PreparationSteps)
+            .Include(r => r.Photos)  // Include photos
             .FirstOrDefaultAsync(r => r.Id == id);
 
         if (recipe == null) return NotFound();
@@ -110,38 +140,36 @@ public class RecipesController : Controller
             Summary = recipe.Summary,
             Category = recipe.Category,
             Diet = recipe.Diet,
+            Photos = recipe.Photos.Select(p => new PhotoViewModel
+            {
+                Id = p.Id,
+                ImagePath = p.ImagePath
+            }).ToList()
         };
 
         foreach (var ingredient in recipe.Ingredients)
-        {
             recipeVm.Ingredients.Add(new IngredientViewModel
             {
                 IngredientId = ingredient.IngredientId,
                 Name = ingredient.Name,
                 Quantity = ingredient.Quantity,
-                IsAllergen = ingredient.IsAllergen,
+                IsAllergen = ingredient.IsAllergen
             });
-        }
 
-        foreach (var step in recipe.PreparationSteps)
-        {
+        var StepNumb = 1;
+        foreach (var step in recipe.PreparationSteps) {
+
             recipeVm.PreparationSteps.Add(new PreparationStepViewModel
             {
                 StepId = step.StepId,
-                StepNumber = step.StepNumber,
-                Description = step.Description,
+                StepNumber = (uint)StepNumb++,
+                Description = step.Description
             });
         }
 
-        foreach (var ingredient in recipeVm.Ingredients)
-        {
-            Console.WriteLine(ingredient);
-        }
+        foreach (var ingredient in recipeVm.Ingredients) Console.WriteLine(ingredient);
 
-        foreach (var sep in recipeVm.PreparationSteps)
-        {
-            Console.WriteLine(sep);
-        }
+        foreach (var sep in recipeVm.PreparationSteps) Console.WriteLine(sep);
 
         return View(recipeVm);
     }
@@ -149,23 +177,19 @@ public class RecipesController : Controller
     // POST: Recipes/Edit/5
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int id, RecipeViewModel viewModel, string IngredientsJson, string StepsJson)
+    public async Task<IActionResult> Edit(int id, RecipeViewModel viewModel, string IngredientsJson, string StepsJson,
+        List<IFormFile> photoFiles, string? removedPhotos)
     {
-        if (id != viewModel.Id)
-        {
-            return NotFound();
-        }
+        if (id != viewModel.Id) return NotFound();
 
         // First, get the existing recipe with its related data
         var existingRecipe = await _context.Recipes
             .Include(r => r.Ingredients)
             .Include(r => r.PreparationSteps)
+            .Include(r => r.Photos)  // Include photos
             .FirstOrDefaultAsync(r => r.Id == id);
 
-        if (existingRecipe == null)
-        {
-            return NotFound();
-        }
+        if (existingRecipe == null) return NotFound();
 
         // Update preparation steps
         var newSteps = JsonConvert.DeserializeObject<List<PreparationStepViewModel>>(StepsJson);
@@ -173,7 +197,6 @@ public class RecipesController : Controller
         var newIngredients = JsonConvert.DeserializeObject<List<IngredientViewModel>>(IngredientsJson);
 
         if (ModelState.IsValid)
-        {
             try
             {
                 // Update basic recipe information
@@ -181,13 +204,12 @@ public class RecipesController : Controller
                 existingRecipe.Summary = viewModel.Summary;
                 existingRecipe.Category = viewModel.Category;
                 existingRecipe.Diet = viewModel.Diet;
-                
+
                 // Remove all existing ingredients
                 existingRecipe.Ingredients.Clear();
 
                 // Add updated ingredients
                 foreach (var ingredientVM in newIngredients)
-                {
                     existingRecipe.Ingredients.Add(new Ingredient
                     {
                         Name = ingredientVM.Name,
@@ -195,20 +217,62 @@ public class RecipesController : Controller
                         IsAllergen = ingredientVM.IsAllergen,
                         RecipeId = existingRecipe.Id
                     });
-                }
-                
+
                 // Remove all existing steps
                 existingRecipe.PreparationSteps.Clear();
 
                 // Add updated steps
                 foreach (var stepVM in newSteps.OrderBy(s => s.StepNumber))
-                {
                     existingRecipe.PreparationSteps.Add(new PreparationStep
                     {
                         StepNumber = stepVM.StepNumber,
                         Description = stepVM.Description,
                         RecipeId = existingRecipe.Id
                     });
+
+                // Handle removed photos
+                if (!string.IsNullOrEmpty(removedPhotos))
+                {
+                    var photoIdsToRemove = removedPhotos.Split(',').Select(int.Parse);
+                    var photosToRemove = existingRecipe.Photos.Where(p => photoIdsToRemove.Contains(p.Id)).ToList();
+                    foreach (var photo in photosToRemove)
+                    {
+                        // Delete physical file
+                        var filePath = Path.Combine("wwwroot", photo.ImagePath.TrimStart('/'));
+                        if (System.IO.File.Exists(filePath))
+                            System.IO.File.Delete(filePath);
+                        
+                        
+                        existingRecipe.Photos.Remove(photo);
+                    }
+                }
+
+                // Handle new photo uploads
+                if (photoFiles != null && photoFiles.Any())
+                {
+                    if (existingRecipe.Photos == null)
+                        existingRecipe.Photos = new List<Photo>();
+
+                    foreach (var file in photoFiles)
+                    {
+                        if (file.Length > 0)
+                        {
+                            var fileName = $"{Guid.NewGuid()}_{file.FileName}";
+                            var filePath = Path.Combine("wwwroot", "uploads", "recipes", fileName);
+
+                            Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+
+                            using (var stream = new FileStream(filePath, FileMode.Create))
+                            {
+                                await file.CopyToAsync(stream);
+                            }
+
+                            existingRecipe.Photos.Add(new Photo
+                            {
+                                ImagePath = $"/uploads/recipes/{fileName}"
+                            });
+                        }
+                    }
                 }
 
                 _context.Update(existingRecipe);
@@ -218,13 +282,8 @@ public class RecipesController : Controller
             catch (DbUpdateConcurrencyException)
             {
                 if (!RecipeExists(viewModel.Id))
-                {
                     return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                throw;
             }
             catch (Exception ex)
             {
@@ -232,7 +291,6 @@ public class RecipesController : Controller
                 Console.WriteLine($"Error updating recipe: {ex.Message}");
                 ModelState.AddModelError("", "An error occurred while saving the recipe. Please try again.");
             }
-        }
 
         // If we got this far, something failed, redisplay form
         // Repopulate the lists before returning the view
@@ -241,7 +299,7 @@ public class RecipesController : Controller
 
         return View(viewModel);
     }
-    
+
     // GET: Recipes/Delete/5
     public async Task<IActionResult> Delete(int? id)
     {

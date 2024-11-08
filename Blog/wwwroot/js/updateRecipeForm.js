@@ -34,11 +34,6 @@ function addStep(step = null) {
     const newStep = document.createElement('div');
     newStep.innerHTML = `
         <input type="hidden" class="step-id" value="${step?.SetpId || '0'}">
-        <input type="number" 
-            class="step-number form-control mt-2" 
-            placeholder="Step number" 
-            value="${step?.StepNumber || ''}"
-            required min="1" max="50">
         <textarea class="step-description form-control mt-2" 
             placeholder="Step description" 
             required>${step?.Description || ''}</textarea>
@@ -62,12 +57,10 @@ function collectFormData() {
 
     const steps = Array.from(document.querySelectorAll('#steps > div')).map(div => ({
         SetpId: parseInt(div.querySelector('.step-id').value),
-        StepNumber: parseInt(div.querySelector('.step-number').value),
         Description: div.querySelector('.step-description').value
     }));
 
     // Sort steps by step number
-    steps.sort((a, b) => a.StepNumber - b.StepNumber);
 
     document.getElementById('ingredientsJson').value = JSON.stringify(ingredients);
     document.getElementById('stepsJson').value = JSON.stringify(steps);

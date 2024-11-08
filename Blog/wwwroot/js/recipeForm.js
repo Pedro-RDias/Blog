@@ -32,11 +32,6 @@ function addStep(step = null) {
     const stepsDiv = document.getElementById('steps');
     const newStep = document.createElement('div');
     newStep.innerHTML = `
-        <input type="number" 
-            class="step-number form-control mt-2" 
-            placeholder="Step number" 
-            value="${step ? step.StepNumber : ''}"
-            required min="1" max="50">
         <textarea class="step-description form-control mt-2" 
             placeholder="Step description" 
             required>${step ? step.Description : ''}</textarea>
@@ -58,7 +53,6 @@ function collectFormData() {
     }));
 
     const steps = Array.from(document.querySelectorAll('#steps > div')).map(div => ({
-        StepNumber: parseInt(div.querySelector('.step-number').value),
         Description: div.querySelector('.step-description').value
     }));
 
@@ -91,10 +85,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Populate data from hidden fields if there are no ingredients/steps added yet
-    if (document.querySelectorAll('#ingredients > div').length === 0 &&
-        document.querySelectorAll('#steps > div').length === 0) {
+    if (document.querySelectorAll('#ingredients > div').length === 0 && document.querySelectorAll('#steps > div').length === 0) {
         populateFormData();
     }
-}
-
-);
+});

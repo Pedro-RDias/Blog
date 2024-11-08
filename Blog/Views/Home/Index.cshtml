@@ -34,9 +34,18 @@
                 <div class="card mb-3" style="max-width: 540px;">
                     <div class="row g-0">
                         <div class="col-md-4">
-                            <img src="https://images.unsplash.com/photo-1617054240991-b0ffce6600da?q=80&w=1885&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                                 class="img-fluid rounded-start"
-                                 alt="Recipe image">
+                            @if (item.Photos.Count > 0)
+                            {
+                                <img src="@item.Photos.ToList()[0].ImagePath"
+                                     class="img-fluid rounded-start"
+                                     alt="Recipe image">
+                            }
+                            else
+                            {
+                                <img src="https://images.unsplash.com/photo-1617054240991-b0ffce6600da?q=80&w=1885&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                                     class="img-fluid rounded-start"
+                                     alt="Recipe image">
+                            }
                         </div>
                         <div class="col-md-8">
                             <div class="card-body">

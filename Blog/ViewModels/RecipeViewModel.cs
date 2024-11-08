@@ -12,12 +12,23 @@ public class RecipeViewModel
     public List<IngredientViewModel> Ingredients { get; set; } = new();
     public List<PreparationStepViewModel> PreparationSteps { get; set; } = new();
 
+    public List<PhotoViewModel> Photos { get; set; } = new();
+    public List<IFormFile> NewPhotos { get; set; } = new();
+
     public override string ToString()
     {
         return "Title: " + Title + ", Summary: " + Summary + ", Category: " + Category + ", Diet: " + Diet +
                ", Ingredients: " + string.Join(", ", Ingredients) + ", Preparation steps: " +
                string.Join(", ", PreparationSteps);
     }
+}
+
+public class PhotoViewModel
+{
+    public int Id { get; set; }
+    public string? Caption { get; set; }
+    public IFormFile? ImageFile { get; set; }
+    public string? ImagePath { get; set; }
 }
 
 public class IngredientViewModel
