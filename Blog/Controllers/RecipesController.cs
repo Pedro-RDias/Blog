@@ -71,6 +71,7 @@ public class RecipesController : Controller
                 Summary = viewModel.Summary,
                 Category = viewModel.Category,
                 Diet = viewModel.Diet,
+                Published = viewModel.Published,
                 AuthorId = _userManager.GetUserId(User),
                 Ingredients = ingredients.Select(i => new Ingredient
                 {
@@ -145,6 +146,7 @@ public class RecipesController : Controller
             Summary = recipe.Summary,
             Category = recipe.Category,
             Diet = recipe.Diet,
+            Published = recipe.Published,
             Photos = recipe.Photos.Select(p => new PhotoViewModel
             {
                 Id = p.Id,
@@ -210,6 +212,8 @@ public class RecipesController : Controller
                 existingRecipe.Summary = viewModel.Summary;
                 existingRecipe.Category = viewModel.Category;
                 existingRecipe.Diet = viewModel.Diet;
+                existingRecipe.Published = viewModel.Published;
+                
 
                 // Remove all existing ingredients
                 existingRecipe.Ingredients.Clear();

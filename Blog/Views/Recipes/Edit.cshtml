@@ -107,6 +107,11 @@
         <input type="hidden" id="ingredientsJson" name="IngredientsJson" value="@ingredientsJson" />
         <input type="hidden" id="stepsJson" name="StepsJson" value="@stepsJson" />
         
+        <div class="form-check mb-3">
+            <input asp-for="Published" class="form-check-input" type="checkbox" />
+            <label asp-for="Published" class="form-check-label">Publish Recipe</label>
+        </div>
+
         <div class="text-end mt-4">
             <a asp-action="Index" class="btn btn-outline-secondary me-2">Back to List</a>
             <input type="submit" value="Save Changes" class="btn btn-primary" style="background-color: #8ea83d; border-color: #8ea83d;"/>

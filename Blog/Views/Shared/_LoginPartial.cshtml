@@ -14,7 +14,7 @@
     @if (User.IsInRole("Admin") || User.IsInRole("Moderator"))
     {
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="" asp-controller="Recipe" asp-action="Index" title="Recipes">
+            <a class="nav-link text-dark" asp-area="" asp-controller="Recipes" asp-action="Index" title="Recipes">
                 <i class="bi bi-journal-text fs-4"></i> 
                 Recipes
             </a>
@@ -23,7 +23,7 @@
     @if (User.IsInRole("Admin"))
     {
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Index" title="Users">
+            <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Index" title="Users">
                 <i class="bi bi-people fs-4"></i> 
                 Users
             </a>
