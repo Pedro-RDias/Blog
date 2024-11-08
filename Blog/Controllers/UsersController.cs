@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RegisterModel = Blog.Areas.Identity.Pages.Account.RegisterModel;
+using Microsoft.AspNetCore.Authorization;  // Add this using statement
 
 namespace Blog.Controllers;
 
@@ -23,7 +24,7 @@ public class RoleViewModel
     public bool IsSelected { get; set; }
 }
 
-
+[Authorize(Roles = "Admin")]  // Add this attribute
 public class UsersController : Controller
 {
     private readonly ApplicationDbContext _context;

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Blog.Controllers;
 
@@ -24,6 +25,7 @@ public class RecipesController : Controller
     }
 
     // GET: Recipes
+    [Authorize(Roles = "Admin,Moderator")]
     public async Task<IActionResult> Index()
     {
         var applicationDbContext = _context.Recipes.Include(r => r.Author);
@@ -47,11 +49,13 @@ public class RecipesController : Controller
         return View(recipe);
     }
 
+    [Authorize(Roles = "Admin,Moderator")]
     public IActionResult Create()
     {
         return View(new RecipeViewModel());
     }
 
+    [Authorize(Roles = "Admin,Moderator")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(RecipeViewModel viewModel, string IngredientsJson, string StepsJson,
@@ -122,6 +126,7 @@ public class RecipesController : Controller
     }
 
     // GET: Recipes/Edit/5
+    [Authorize(Roles = "Admin,Moderator")]
     public async Task<IActionResult> Edit(int? id)
     {
         if (id == null) return NotFound();
@@ -175,6 +180,7 @@ public class RecipesController : Controller
     }
 
     // POST: Recipes/Edit/5
+    [Authorize(Roles = "Admin,Moderator")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(int id, RecipeViewModel viewModel, string IngredientsJson, string StepsJson,
@@ -301,6 +307,7 @@ public class RecipesController : Controller
     }
 
     // GET: Recipes/Delete/5
+    [Authorize(Roles = "Admin,Moderator")]
     public async Task<IActionResult> Delete(int? id)
     {
         if (id == null) return NotFound();
@@ -314,6 +321,7 @@ public class RecipesController : Controller
     }
 
     // POST: Recipes/Delete/5
+    [Authorize(Roles = "Admin,Moderator")]
     [HttpPost]
     [ActionName("Delete")]
     [ValidateAntiForgeryToken]
