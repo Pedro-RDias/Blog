@@ -8,63 +8,118 @@
     <h1 class="text-center mb-4">Recipe Details</h1>
     <hr />
 
-    <div class="border rounded p-4 bg-light">
-        <h4 class="mb-4">Recipe Information</h4>
+    <div class="row">
+        <!-- Carrossel de Imagens à Esquerda -->
+        <div class="col-md-6">
+            <div id="recipeCarousel" class="carousel slide mb-4" data-bs-ride="carousel" data-bs-interval="5000">
+                <div class="carousel-inner">
+                    @if (Model.Photos != null && Model.Photos.Count > 0)
+                    {
+                        foreach (var photo in Model.Photos)
+                        {
+                            <div class="carousel-item @(photo == Model.Photos.First() ? "active" : "")">
+                                <img src="@photo.ImagePath"
+                                     class="d-block w-100"
+                                     style="height: 300px; object-fit: cover;"
+                                     alt="Recipe image">
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="carousel-item active">
+                            <img src="https://images.unsplash.com/photo-1617054240991-b0ffce6600da?q=80&w=1885&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                                 class="d-block w-100"
+                                 style="height: 300px; object-fit: cover;"
+                                 alt="Recipe image">
+                        </div>
+                    }
+                </div>
 
-        <dl class="row">
-            <dt class="col-sm-3">
-                @Html.DisplayNameFor(model => model.Title)
-            </dt>
-            <dd class="col-sm-9">
-                @Html.DisplayFor(model => model.Title)
-            </dd>
+                <button class="carousel-control-prev" type="button" data-bs-target="#recipeCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#recipeCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+        </div>
 
-            <dt class="col-sm-3">
-                @Html.DisplayNameFor(model => model.Summary)
-            </dt>
-            <dd class="col-sm-9">
-                @Html.DisplayFor(model => model.Summary)
-            </dd>
+        <!-- Informações da Receita à Direita -->
+        <div class="col-md-6">
+            <dl class="row">
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.Author)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.Author.UserName)
+                </dd>
 
-            <dt class="col-sm-3">
-                @Html.DisplayNameFor(model => model.Category)
-            </dt>
-            <dd class="col-sm-9">
-                @Html.DisplayFor(model => model.Category)
-            </dd>
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.Title)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.Title)
+                </dd>
 
-            <dt class="col-sm-3">
-                @Html.DisplayNameFor(model => model.Diet)
-            </dt>
-            <dd class="col-sm-9">
-                @Html.DisplayFor(model => model.Diet)
-            </dd>
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.Summary)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.Summary)
+                </dd>
 
-            <dt class="col-sm-3">
-                @Html.DisplayNameFor(model => model.DateCreated)
-            </dt>
-            <dd class="col-sm-9">
-                @Html.DisplayFor(model => model.DateCreated)
-            </dd>
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.Category)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.Category)
+                </dd>
 
-            <dt class="col-sm-3">
-                @Html.DisplayNameFor(model => model.DateUpdated)
-            </dt>
-            <dd class="col-sm-9">
-                @Html.DisplayFor(model => model.DateUpdated)
-            </dd>
-
-            <dt class="col-sm-3">
-                @Html.DisplayNameFor(model => model.Author)
-            </dt>
-            <dd class="col-sm-9">
-                @Html.DisplayFor(model => model.Author.Id)
-            </dd>
-        </dl>
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.Diet)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.Diet)
+                </dd>
+            </dl>
+        </div>
     </div>
-    
+
+    <!-- Resto das Informações da Receita -->
+    <div class="border rounded p-4 bg-light mt-4">
+        <h4 class="mb-4">Detailed Information</h4>
+
+        <dt class="col-sm-3">
+            Ingredients:
+        </dt>
+        <dd class="col-sm-9">
+            <ul class="list-unstyled">
+                @foreach (var ingredient in Model.Ingredients)
+                {
+                    <li>@ingredient.Name: @ingredient.Quantity</li>
+                }
+            </ul>   
+        </dd>
+
+        <dt class="col-sm-3">
+            Preparation Steps:
+        </dt>
+        <dd class="col-sm-9">
+            <ol>
+                @foreach (var step in Model.PreparationSteps) 
+                {
+                    <li>@step.Description</li>
+                }
+            </ol>
+        </dd>
+    </div>
+
     <div class="text-end mt-4">
         <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary me-2" style="background-color: #8ea83d; border-color: #8ea83d;">Edit</a>
         <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
+        <a asp-action="Index" asp-controller="Home" class="btn btn-primary ms-2">Go Back</a> 
     </div>
 </div>

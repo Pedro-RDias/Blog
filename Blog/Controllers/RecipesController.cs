@@ -39,6 +39,7 @@ public class RecipesController : Controller
             .Include(r => r.Author)
             .Include(r => r.Comments)
             .Include(r => r.Ratings)
+            .Include(r => r.Photos)
             .Include(r => r.Ingredients)
             .Include(r => r.PreparationSteps)
             .FirstOrDefaultAsync(m => m.Id == id);

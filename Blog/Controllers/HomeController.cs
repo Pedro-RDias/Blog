@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Blog.Data;
 using Blog.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 
 namespace Blog.Controllers;
@@ -139,4 +140,5 @@ public class HomeController : Controller
     {
         return View();
     }
+    
 }
