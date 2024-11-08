@@ -87,6 +87,11 @@
         <input type="hidden" id="ingredientsJson" name="IngredientsJson" value="@(Model?.Ingredients != null ? JsonSerializer.Serialize(Model.Ingredients) : "")"/>
         <input type="hidden" id="stepsJson" name="StepsJson" value="@(Model?.PreparationSteps != null ? JsonSerializer.Serialize(Model.PreparationSteps) : "")"/>
 
+        <div class="form-check mb-3">
+            <input asp-for="Published" class="form-check-input" type="checkbox" />
+            <label asp-for="Published" class="form-check-label">Publish Recipe</label>
+        </div>
+
         <!-- Botões de Ação -->
         <div class="text-end mt-4">
             <a asp-action="Index" class="btn btn-outline-secondary me-2">Back to List</a>
