@@ -12,6 +12,11 @@ html {
   box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
+/* Ocultar barra de nav horizontal */
+html, body {
+  overflow-x: hidden;
+}
+
 html {
   position: relative;
   min-height: 100%;
@@ -87,51 +92,81 @@ body {
   margin-bottom: 0;
 }
 
-.btn-danger {
-  color: black !important; /* Texto preto em todos os botões danger */
-}
+/*.btn-danger {*/
+/*  color: black !important; !* Texto preto em todos os botões danger *!*/
+/*}*/
 
 .btn {
   transition: all 0.2s ease-in-out; /* Aplica a transição a qualquer mudança no botão */
 }
 
+/* Card de Receita */
+.recipe-card {
+  border-radius: 12px;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.recipe-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Imagem e Overlay */
 .image-container {
   position: relative;
+  overflow: hidden;
+  border-radius: 12px 12px 0 0;
 }
+
+.card-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.recipe-card:hover .card-image {
+  transform: scale(1.05);
+}
+
+/* Overlay com Resumo da Receita */
 .overlay {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.5);
   color: white;
+  opacity: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  opacity: 0;
+  padding: 1rem;
   transition: opacity 0.3s ease;
   text-align: center;
-  padding: 0 1rem;
-  border-radius: 12px 12px 0 0; /* top-left, top-right, bottom-right, bottom-left */
-}
-.image-container:hover .overlay {
-  opacity: 1;
-}
-.overlay-text {
   font-size: 0.9rem;
 }
+
+.recipe-card:hover .overlay {
+  opacity: 1;
+}
+
+/* Estilo de Paginação */
+.pagination .page-item .page-link {
+  color: #555;
+  border-radius: 4px;
+  margin: 0 2px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.pagination .page-item .page-link:hover {
+  background-color: #198754;
+  color: white;
+}
+
 h6.fw-bold {
   font-weight: bold;
-}
-
-.custom-close-button {
-  background-color: #dc3545; /* Cor vermelha do Bootstrap para danger */
-  transition: background-color 0.3s ease; /* Suaviza a transição de cor */
-}
-
-.custom-close-button:hover {
-  background-color: #c82333; /* Um tom mais escuro de vermelho ao passar o mouse */
 }
 
 .rating {
@@ -147,3 +182,129 @@ h6.fw-bold {
 .star:hover ~ .star {
   color: #FFA500;
 }
+
+/* Estilo de hover com delineado e animação fade */
+.hover-effect {
+  transition: box-shadow 0.3s ease, color 0.3s ease;
+}
+
+.hover-effect:hover {
+  color: #f4ba18; /* Altere para a cor que desejar ao fazer hover */
+  box-shadow: 0 2px 0 0 #f4ba18;
+}
+
+/* Style adjustments for search bar */
+.search-bar .input-group {
+  border-radius: 30px;
+  
+}
+
+.search-bar .form-control:focus {
+  box-shadow: none;
+}
+
+.search-bar .btn-success {
+  background-color: #f4ba18;
+  font-weight: bold;
+  border-color: #f4ba18;
+}
+
+.search-bar .btn-danger {
+  font-weight: bold;
+  color: white;
+}
+
+.search-bar .input-group-text {
+  padding-right: 0.5rem;
+  padding-left: 0.5rem;
+}
+
+/* Estilos padrão para o dropdown menu */
+.dropdown-menu {
+  max-height: 0;            /* Inicialmente colapsado */
+  overflow: hidden;         /* Esconde conteúdo que ultrapassa o limite */
+  opacity: 0;               /* Invisível no início */
+  transition: max-height 0.5s ease, opacity 0.5s ease; /* Transição suave para altura e opacidade */
+  display: block;           /* Mantém o elemento no fluxo, mas colapsado */
+  visibility: hidden;       /* Inicialmente invisível */
+}
+
+/* Estilos para quando o dropdown é aberto */
+.dropdown-menu.show {
+  max-height: 500px;        /* Defina um valor suficientemente grande para acomodar o conteúdo */
+  opacity: 1;               /* Torna o dropdown visível */
+  visibility: visible;      /* Torna o dropdown visível */
+}
+
+
+/* Estilo para o Dropdown Escuro */
+.dropdown-menu-dark {
+  background-color: #343a40; /* Fundo escuro do dropdown */
+  border: none;
+}
+
+/* Estilo para os itens do dropdown e sub-itens */
+.dropdown-menu-dark .dropdown-item {
+  color: #a6a6a6; /* Cor de texto para os itens */
+  transition: background-color 0.2s ease;
+  padding-left: 1rem; /* Alinha todos os itens de forma uniforme */
+}
+
+/* Hover nos itens do dropdown */
+.dropdown-menu-dark .dropdown-item:hover {
+  background-color: #495057; /* Cor de fundo ao passar o mouse */
+  color: white;
+}
+
+/* Ícone de seta */
+.dropdown-menu-dark .arrow {
+  color: #a6a6a6;
+  transition: transform 0.2s ease;
+}
+
+/* Ativo no item */
+.dropdown-menu-dark .dropdown-item.active {
+  background-color: #495057;
+  color: white;
+  font-weight: bold;
+}
+
+/* Sub-lista para meses - sem indentação */
+.months-list {
+  margin-top: 0.5rem;
+  padding-left: 1rem; /* Mantém alinhamento dos meses com os anos */
+}
+
+
+/* Configuração para Nav e Hero ocuparem 100vh combinados */
+.navbar {
+  height: 80px; /* Altura fixa para a navegação */
+}
+
+.hero-section {
+  height: calc(100vh - 80px); /* Hero ocupa o restante da tela */
+  overflow: hidden;
+}
+
+/* Imagem de Fundo */
+.hero-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}
+
+/* Conteúdo do Hero centralizado e com fundo transparente */
+.hero-content {
+  height: 100%; /* Garante que o conteúdo ocupe 100% da altura do hero */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1;
+}
+
