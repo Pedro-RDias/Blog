@@ -2,136 +2,171 @@
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @model Blog.Controllers.RecipesViewIndexModel
 
-
 @{
-ViewData["Title"] = "Sabor&Arte";
+    ViewData["Title"] = "Sabor&Arte";
 }
+<main>
+    <!-- Hero Section -->
+    <section class="hero-section position-relative w-100" style="margin-bottom: 1rem;">
+        <img src="~/images/hero.png" alt="Imagem" class="hero-image">
+        <div class="hero-content d-flex flex-column justify-content-center align-items-center text-center text-white position-absolute top-0 start-0 w-100">
+            <h1 class="display-4 fw-bold">Welcome To Sabor&Arte®</h1>
+            <p class="lead">Thousands of recipes. Unlimited inspiration.</p>
 
-<main class="container my-4" style="max-width: 900px;">
-    <h1 class="text-center mb-4">Recipes</h1>
-    <div class="row">
-        <section class="col-12 col-md-8 col-lg-10">
-            @foreach (var item in Model.Recipes)
-            {
-            <div class="card mb-4 shadow-sm position-relative" style="border-radius: 12px; overflow: hidden;">
-                <a asp-controller="Recipes" asp-action="Details" asp-route-id="@item.Id" style="text-decoration: none; color: inherit;">
-                    <div class="image-container" style="position: relative;">
-                        @if (item.Photos.Count > 0)
-                        {
-                        <img src="@item.Photos.ToList()[0].ImagePath"
-                             class="img-fluid card-image" style="width: 100%; height: 200px; object-fit: cover;"
-                             alt="Recipe image">
-                        }
-                        else
-                        {
-                        <img src="https://images.unsplash.com/photo-1617054240991-b0ffce6600da?q=80&w=1885&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                             class="img-fluid card-image" style="width: 100%; height: 200px; object-fit: cover;"
-                             alt="Recipe image">
-                        }
-                        <!-- Overlay com o resumo da receita no hover -->
-                        <div class="overlay">
-                            <p class="overlay-text">@item.Summary</p>
+            <div class="search-bar mt-4 w-75 w-md-50 position-relative">
+                <form method="get" class="d-flex align-items-center">
+                    <input type="hidden" name="PageNumber" value="1" />
+                    <input type="hidden" name="Month" id="selectedMonth" value="@Model.FilterParams.Month" />
+                    <input type="hidden" name="Year" id="selectedYear" value="@Model.FilterParams.Year" />
+
+                    <div class="input-group rounded shadow" style="width: 100%; background: white; position: relative;">
+                        <span id="searchIcon" class="input-group-text bg-transparent border-0" style="font-size: 1.25rem; cursor: pointer;">
+                            <i class="bi bi-search text-muted"></i>
+                        </span>
+
+                        <input type="text"
+                               name="SearchTerm"
+                               value="@Model.SearchTerm"
+                               class="form-control border-0"
+                               placeholder="Search Recipes..."
+                               aria-label="Search"
+                               aria-describedby="searchIcon"
+                               style="border-radius: 0;"
+                               id="searchInput">
+
+                        <span id="selectedFilter" class="px-2" style="display: none; align-items: center; font-size: 0.9rem; color: gray;">
+                            <span id="filterText"></span>
+                            <i class="bi bi-x-lg ms-1" style="cursor: pointer;" id="clearFilter"></i>
+                        </span>
+
+                        <!-- Filtro como selectbox -->
+                        <div class="dropdown position-relative">
+                            <span class="input-group-text border bg-light text-secondary" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer; border-radius: 0; font-size: 1rem; padding: 0.5rem 1rem; display: flex; align-items: center;">
+                                Filter By Date
+                                <i class="bi bi-filter ms-2"></i>
+                            </span>
+
+                            <ul class="dropdown-menu p-3 shadow-sm custom-dropdown" aria-labelledby="filterDropdown" style="background-color: #ffffff; border-radius: 0 0 8px 8px;" data-bs-display="static" data-bs-auto-close="outside">
+                                @foreach (var year in Model.Dates.Keys.OrderByDescending(y => y))
+                                {
+                                    <li class="px-2 py-1">
+                                        <a href="#" class="year-toggle d-flex justify-content-between align-items-center fw-bold text-secondary" data-year="@year" style="text-decoration: none;">
+                                            @year
+                                            <i class="bi bi-chevron-right"></i>
+                                        </a>
+                                        <ul class="list-unstyled ps-3" id="months-@year" style="display: none;">
+                                            @foreach (var month in Model.Dates[year].OrderByDescending(m => m))
+                                            {
+                                                <li>
+                                                    <a href="#" class="dropdown-item text-muted py-1 filter-month @(Model.CurrentMonth == month && Model.CurrentYear == year ? "fw-bold" : "")"
+                                                       data-month="@month" data-year="@year" style="text-decoration: none;">
+                                                        @CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month)
+                                                    </a>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+
+                        <button type="submit" class="btn btn-success px-4" style="border-radius: 0px 4px 4px 0px;">
+                            Search
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção Principal com as Receitas -->
+    <div class="row px-3 px-lg-4">
+        <section id="recipes-section" class="col-12 mx-auto">
+            <div class="row g-3"> <!-- g-3 adiciona gap de 1rem entre cards -->
+                @foreach (var item in Model.Recipes)
+                {
+                    <div class="col-12 col-lg-3">
+                        <div class="card shadow-sm recipe-card position-relative">
+                            <a asp-controller="Recipes" asp-action="Details" asp-route-id="@item.Id" class="text-decoration-none text-dark">
+                                <div class="image-container position-relative">
+                                    @if (item.Photos.Count > 0)
+                                    {
+                                        <img src="@item.Photos.ToList()[0].ImagePath"
+                                             class="img-fluid card-image"
+                                             alt="Recipe image">
+                                    }
+                                    else
+                                    {
+                                        <img src="https://images.unsplash.com/photo-1617054240991-b0ffce6600da?q=80&w=1885&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                                             class="img-fluid card-image"
+                                             alt="Recipe image">
+                                    }
+
+                                    <!-- Overlay com o resumo da receita -->
+                                    <div class="overlay">
+                                        <p class="overlay-text">@item.Summary</p>
+                                    </div>
+                                </div>
+
+                                <div class="card-body">
+                                    <div class="d-flex flex-column">
+                                        <h5 class="card-title mb-1 fw-semibold" style="font-size: 1.25rem;">
+                                            @Html.DisplayFor(modelItem => item.Title)
+                                        </h5>
+                                        <span class="badge bg-light text-secondary" style="font-size: 0.85rem; font-weight: 500; align-self: start;">
+                                            @Html.DisplayFor(modelItem => item.Category)
+                                        </span>
+                                    </div>
+
+                                    <!-- Exibição do Rating Médio -->
+                                    <div class="rating mb-2">
+                                        @for (int i = 1; i <= 5; i++)
+                                        {
+                                        <span class="star" style="color: @((i <= item.AverageRating) ? "#FFD700" : "#dcdcdc");">★</span>
+                                        }
+                                        <small class="text-muted">(@item.AverageRating.ToString("0.0"))</small>
+                                    </div>
+                                    <p class="card-text">
+                                        <small class="text-muted">
+                                            <i class="bi bi-calendar3"></i> Created: @Html.DisplayFor(modelItem => item.DateCreated)
+                                        </small>
+                                    </p>
+                                </div>
+                            </a>
                         </div>
                     </div>
+                }
 
-                    <div class="card-body" style="padding: 1.5rem;">
-                        <h5 class="card-title" style="display: flex; align-items: center; gap: 0.5rem;">
-                            @Html.DisplayFor(modelItem => item.Title)
-                            <span class="badge text-bg-secondary">@Html.DisplayFor(modelItem => item.Category)</span>
-                        </h5>
-                        <p class="card-text">
-                            <small class="text-body-secondary">Created: @Html.DisplayFor(modelItem => item.DateCreated)</small>
-                        </p>
+                <!-- Mensagem caso não haja receitas -->
+                @if (Model.Recipes.Count == 0)
+                {
+                    <div class="alert alert-info text-center mt-4">
+                        No recipes found matching your criteria.
                     </div>
-                </a>
+                }
             </div>
-            }
 
-            @if (Model.Recipes.Count == 0)
-            {
-            <div class="alert alert-info text-center" style="margin-top: 20px;">
-                No recipes found matching your criteria.
-            </div>
-            }
-
+            <!-- Paginação -->
             <nav aria-label="Recipe pagination" class="d-flex justify-content-center mt-4">
                 <ul class="pagination">
                     @if (Model.Recipes.HasPreviousPage)
                     {
-                    <li class="page-item">
-                        <a class="page-link"
-                           asp-action="Index"
-                           asp-route-pageNumber="@(Model.Recipes.PageIndex - 1)"
-                           asp-route-searchTerm="@Model.SearchTerm"
-                           asp-route-month="@Model.CurrentMonth"
-                           asp-route-year="@Model.CurrentYear">
-                            Previous
-                        </a>
-                    </li>
+                        <li class="page-item">
+                            <a class="page-link" asp-action="Index" asp-route-pageNumber="@(Model.Recipes.PageIndex - 1)" asp-route-searchTerm="@Model.SearchTerm" asp-route-month="@Model.CurrentMonth" asp-route-year="@Model.CurrentYear">
+                                Previous
+                            </a>
+                        </li>
                     }
                     @if (Model.Recipes.HasNextPage)
                     {
-                    <li class="page-item">
-                        <a class="page-link"
-                           asp-action="Index"
-                           asp-route-pageNumber="@(Model.Recipes.PageIndex + 1)"
-                           asp-route-searchTerm="@Model.SearchTerm"
-                           asp-route-month="@Model.CurrentMonth"
-                           asp-route-year="@Model.CurrentYear">
-                            Next
-                        </a>
-                    </li>
+                        <li class="page-item">
+                            <a class="page-link" asp-action="Index" asp-route-pageNumber="@(Model.Recipes.PageIndex + 1)" asp-route-searchTerm="@Model.SearchTerm" asp-route-month="@Model.CurrentMonth" asp-route-year="@Model.CurrentYear">
+                                Next
+                            </a>
+                        </li>
                     }
                 </ul>
             </nav>
-        </section>
-
-        <!-- Sidebar com a barra de pesquisa e filtros -->
-        <section class="col-12 col-md-4 col-lg-2">
-            <div class="mb-4" style="max-width: 250px;">
-                <form method="get" class="input-group" style="width: 100%;">
-                    <input type="hidden" name="PageNumber" value="1"/>
-                    <input type="hidden" name="Month" value="@Model.FilterParams.Month"/>
-                    <input type="hidden" name="Year" value="@Model.FilterParams.Year"/>
-                    <input type="text"
-                           name="SearchTerm"
-                           value="@Model.SearchTerm"
-                           class="form-control rounded-start"
-                           placeholder="Search..."
-                           style="border-radius: 20px 0 0 20px;"/>
-                    <button type="submit" class="btn btn-primary rounded-start" style="border-radius: 20px 0 0 20px;">🔍</button>
-                    @if (!string.IsNullOrEmpty(Model.SearchTerm) || Model.CurrentMonth.HasValue)
-                    {
-                    <a asp-action="Index" class="btn btn-danger rounded-end custom-close-button" style="border-radius: 0 20px 20px 0; color: white; text-decoration: none;">
-                        ✖
-                    </a>
-                    }
-                </form>
-            </div>
-
-            <ul class="nav flex-column mb-4" style="border-radius: 8px; padding: 1rem; background-color: #f8f9fa; max-width: 250px;">
-                @foreach (var year in Model.Dates.Keys.OrderByDescending(y => y))
-                {
-                <li class="nav-item">
-                    <strong>@year</strong>
-                    <ul class="list-unstyled ms-3">
-                        @foreach (var month in Model.Dates[year].OrderByDescending(m => m))
-                        {
-                        <li>
-                            <a class="nav-link text-primary @(Model.CurrentMonth == month && Model.CurrentYear == year ? "active" : "")"
-                               style="font-size: 0.9rem;"
-                               asp-action="Index"
-                               asp-route-month="@month"
-                               asp-route-year="@year"
-                               asp-route-searchTerm="@Model.SearchTerm">
-                                @CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month)
-                            </a>
-                        </li>
-                        }
-                    </ul>
-                </li>
-                }
-            </ul>
         </section>
     </div>
 </main>

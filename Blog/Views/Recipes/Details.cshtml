@@ -51,31 +51,10 @@
         <div class="col-md-6">
             <dl class="row">
                 <dt class="col-sm-3">
-                    @Html.DisplayNameFor(model => model.Author)
-                </dt>
-                <dd class="col-sm-9">
-                    @Html.DisplayFor(model => model.Author.UserName)
-                </dd>
-
-                <dt class="col-sm-3">
                     @Html.DisplayNameFor(model => model.Title)
                 </dt>
                 <dd class="col-sm-9">
                     @Html.DisplayFor(model => model.Title)
-                </dd>
-
-                <dt class="col-sm-3">
-                    @Html.DisplayNameFor(model => model.Summary)
-                </dt>
-                <dd class="col-sm-9">
-                    @Html.DisplayFor(model => model.Summary)
-                </dd>
-
-                <dt class="col-sm-3">
-                    @Html.DisplayNameFor(model => model.Category)
-                </dt>
-                <dd class="col-sm-9">
-                    @Html.DisplayFor(model => model.Category)
                 </dd>
 
                 <dt class="col-sm-3">
@@ -84,51 +63,85 @@
                 <dd class="col-sm-9">
                     @Html.DisplayFor(model => model.Diet)
                 </dd>
+
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.Category)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.Category)
+                </dd>
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.Author)
+                </dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.Author.UserName)    
+                </dd>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    @Html.AntiForgeryToken()
+                    <dt class="col-sm-3 fw-bold">Rate this Recipe</dt> 
+                    <yield break></yield>
+                    <dd class="col-sm-9">
+                        <div class="rating"> 
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                            <span class="star" data-rating="@i">☆</span>
+                            }
+                        </div>
+                        <div id="ratingMessage" class="mt-2"></div>
+                    </dd>
+                }
+                
             </dl>
         </div>
     </div>
 
-    <!-- Resto das Informações da Receita -->
-    <div class="border rounded p-4 bg-light mt-4">
+    <!-- Resto das Informações da Receita com Duas Colunas -->
+    <div class="row border rounded p-4 bg-light mt-4">
         <h4 class="mb-4">Detailed Information</h4>
 
-        <dt class="col-sm-3">
-            Ingredients:
-        </dt>
-        <dd class="col-sm-9">
-            <ul class="list-unstyled">
-                @foreach (var ingredient in Model.Ingredients)
-                {
-                    <li>@ingredient.Name: @ingredient.Quantity</li>
-                }
-            </ul>   
-        </dd>
+        <div class="col-md-6">
+            <dt class="col-sm-3">
+                Summary:
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.Summary)
+            </dd>
 
-        <dt class="col-sm-3">
-            Preparation Steps:
-        </dt>
-        <dd class="col-sm-9">
-            <ol>
-                @foreach (var step in Model.PreparationSteps) 
-                {
-                    <li>@step.Description</li>
-                }
-            </ol>
-        </dd>
-    </div>
+            <dt class="col-sm-3">
+                Ingredients:
+            </dt>
+            <dd class="col-sm-9">
+                <ul class="list-unstyled">
+                    @foreach (var ingredient in Model.Ingredients)
+                    {
+                        <li>@ingredient.Name: @ingredient.Quantity</li>
+                    }
+                </ul>   
+            </dd>
+        </div>
 
-
-    <div class="text-end mt-4">
-        <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary me-2" style="background-color: #8ea83d; border-color: #8ea83d;">Edit</a>
-        <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
-        <a asp-action="Index" asp-controller="Home" class="btn btn-primary ms-2">Go Back</a> 
+        <div class="col-md-6">
+            <dt class="col-sm-3">
+                Preparation Steps:
+            </dt>
+            <dd class="col-sm-9">
+                <ol>
+                    @foreach (var step in Model.PreparationSteps) 
+                    {
+                        <li>@step.Description</li>
+                    }
+                </ol>
+            </dd>
+        </div>
     </div>
     
-    @if (User.IsInRole("Admin") || User.IsInRole("Moderator"))
-    {
-        <div class="text-end mt-4">
+    <div class="text-end mt-4">
+        @if (User.IsInRole("Admin") || User.IsInRole("Moderator"))
+        {
             <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary me-2" style="background-color: #8ea83d; border-color: #8ea83d;">Edit</a>
             <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
-        </div>
-    }
+        }
+        <a asp-action="Index" asp-controller="Home" class="btn btn-primary ms-2">Go Back</a>
+    </div>
 </div>

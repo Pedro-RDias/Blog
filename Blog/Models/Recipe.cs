@@ -33,4 +33,10 @@ public class Recipe
     [ForeignKey("RecipeId")] public virtual ICollection<Rating> Ratings { get; set; } = new List<Rating>();
 
     [ForeignKey("RecipeId")] public virtual ICollection<Photo> Photos { get; set; } = new List<Photo>();
+    
+    // Propriedade calculada para média de rating
+    [NotMapped]
+    public double AverageRating => Ratings != null && Ratings.Any()
+        ? Ratings.Average(r => r.RatingValue)
+        : 0.0; // Define a média como 0 se não houver ratings
 }

@@ -3,61 +3,56 @@
 @inject UserManager<User> UserManager
 
 <ul class="navbar-nav">
+    @if (SignInManager.IsSignedIn(User))
+    {
     <li class="nav-item">
-        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index" title="Home">
-            <i class="bi bi-house-door fs-4"></i> 
+        <a class="nav-link text-dark fw-semibold hover-effect" asp-area="" asp-controller="Home" asp-action="Index" title="Home">
+            <i class="bi bi-house-door fs-4"></i>
             Home
         </a>
     </li>
-@if (SignInManager.IsSignedIn(User))
-{
     @if (User.IsInRole("Admin") || User.IsInRole("Moderator"))
     {
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="" asp-controller="Recipes" asp-action="Index" title="Recipes">
-                <i class="bi bi-journal-text fs-4"></i> 
-                Recipes
-            </a>
-        </li>
+    <li class="nav-item">
+        <a class="nav-link text-dark fw-semibold hover-effect" asp-area="" asp-controller="Recipes" asp-action="Index" title="Recipes">
+            <i class="bi bi-journal-text fs-4"></i>
+            Recipes
+        </a>
+    </li>
     }
     @if (User.IsInRole("Admin"))
     {
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Index" title="Users">
-                <i class="bi bi-people fs-4"></i> 
-                Users
-            </a>
-        </li>
+    <li class="nav-item">
+        <a class="nav-link text-dark fw-semibold hover-effect" asp-area="" asp-controller="Users" asp-action="Index" title="Users">
+            <i class="bi bi-people fs-4"></i>
+            Users
+        </a>
+    </li>
     }
     <li class="nav-item">
-        <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Profile">
-            <i class="bi bi-person-circle fs-4"></i> 
-            @* Hello @User.Identity?.Name! *@
+        <a class="nav-link text-dark fw-semibold hover-effect" asp-area="Identity" asp-page="/Account/Manage/Index" title="Profile">
+            <i class="bi bi-person-circle fs-4"></i>
             Profile
         </a>
     </li>
-    @* <li class="nav-item"> *@
-    @*     <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy" title="Privacy Police"> *@
-    @*         <i class="bi bi-shield-lock fs-4"></i>  *@
-    @*         Privacy Police *@
-    @*     </a> *@
-    @* </li> *@
     <li class="nav-item">
         <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-            <button type="submit" class="nav-link btn btn-link text-dark" title="Logout" aria-label="Logout">
-                <i class="bi bi-box-arrow-right fs-4"></i> 
+            <button type="submit" class="nav-link btn btn-link text-dark fw-semibold hover-effect" title="Logout" aria-label="Logout" style="border: none; background: none; border-radius: 0;">
+                <i class="bi bi-box-arrow-right fs-4"></i>
                 Logout
             </button>
         </form>
     </li>
-}
-else
-{
+
+    }
+    else
+    {
     <li class="nav-item">
-        <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Register</a>
+        <a class="nav-link text-dark fw-semibold hover-effect" asp-area="Identity" asp-page="/Account/Register">Register</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Login</a>
+        <a class="nav-link text-dark fw-semibold hover-effect" asp-area="Identity" asp-page="/Account/Login">Login</a>
     </li>
-}
+    }
 </ul>
+
