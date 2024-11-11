@@ -333,6 +333,7 @@ public class RecipesController : Controller
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
         var recipe = await _context.Recipes.FindAsync(id);
+        var comments = _context.Comments.Where(c => c.RecipeId == id);        if (comments != null) _context.Comments.RemoveRange(comments);        var ratings = _context.Ratings.Where(r => r.RecipeId == id);        if (ratings != null) _context.Ratings.RemoveRange(ratings);
         if (recipe != null) _context.Recipes.Remove(recipe);
 
         await _context.SaveChangesAsync();
