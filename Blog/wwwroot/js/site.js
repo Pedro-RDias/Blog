@@ -289,15 +289,49 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function createCommentHTML(comment) {
         const date = new Date(comment.dateCreated).toLocaleDateString();
+        const canDelete = window.currentUserId === comment.authorId || window.isAdmin;
+        
         return `
-            <div class="comment mb-3 p-3 border rounded">
+            <div class="comment mb-3 p-3 border rounded" data-comment-id="${comment.id}">
                 <div class="d-flex justify-content-between">
                     <strong>${comment.authorName || 'Anonymous'}</strong>
-                    <small>${date}</small>
+                    <div>
+                        <small>${date}</small>
+                        ${canDelete ? `
+                            <button class="btn btn-sm btn-danger ms-2 delete-comment" 
+                                    onclick="deleteComment(${comment.id})">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        ` : ''}
+                    </div>
                 </div>
                 <p class="mt-2 mb-0">${comment.content}</p>
             </div>
         `;
     }
 });
+
+// Add this function at global scope
+function deleteComment(commentId) {
+    fetch(`/api/comments/${commentId}`, {
+        method: 'DELETE',
+        headers: {
+            'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to delete comment');
+        }
+        // Remove the comment from DOM
+        const commentElement = document.querySelector(`[data-comment-id="${commentId}"]`);
+        if (commentElement) {
+            commentElement.remove();
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error deleting comment. Please try again.');
+    });
+}
 

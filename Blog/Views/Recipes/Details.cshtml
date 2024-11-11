@@ -139,6 +139,13 @@
     <div class="row mt-5">
         <div class="col-12">
             <h4>Comments</h4>
+            @{
+                var currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            }
+            <script>
+                window.currentUserId = '@currentUserId';
+                window.isAdmin = @Json.Serialize(User.IsInRole("Admin"));
+            </script>
             @if (User.Identity.IsAuthenticated)
             {
                 <div class="mb-4">
