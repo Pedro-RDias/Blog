@@ -71,6 +71,7 @@ public class ApplicationDbContext : IdentityDbContext<User>
             .HasMany(c => c.Replies)
             .WithOne()
             .HasForeignKey(c => c.ReplyToId)
+            .IsRequired(false)  // Make ReplyToId optional
             .OnDelete(DeleteBehavior.Restrict);
 
 

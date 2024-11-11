@@ -211,3 +211,93 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 });
+
+
+
+// Comment System
+document.addEventListener("DOMContentLoaded", function() {
+    const commentsContainer = document.getElementById('commentsContainer');
+    const submitButton = document.getElementById('submitComment');
+    const commentContent = document.getElementById('commentContent');
+    const recipeId = window.location.pathname.split('/').pop();
+
+    if (submitButton) {
+        submitButton.addEventListener('click', submitComment);
+    }
+
+    loadComments();
+
+    function loadComments() {
+        fetch(`/api/comments/recipe/${recipeId}`)
+            .then(response => response.json())
+            .then(result => {
+                console.log('Comments response:', result); // Debug log
+                
+                if (result.success) {
+                    if (!result.data || result.data.length === 0) {
+                        commentsContainer.innerHTML = '<p class="text-muted">No comments yet. Be the first to comment!</p>';
+                        return;
+                    }
+                    
+                    commentsContainer.innerHTML = result.data
+                        .map(comment => createCommentHTML(comment))
+                        .join('');
+                } else {
+                    throw new Error(result.message || 'Failed to load comments');
+                }
+            })
+            .catch(error => {
+                console.error('Error loading comments:', error);
+                commentsContainer.innerHTML = '<p class="text-danger">Error loading comments</p>';
+            });
+    }
+
+    function submitComment() {
+        const content = commentContent.value.trim();
+        if (!content) {
+            alert('Please enter a comment');
+            return;
+        }
+
+        fetch('/api/comments', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+            },
+            body: JSON.stringify({
+                content: content,
+                recipeId: parseInt(recipeId)
+            })
+        })
+        .then(async response => {
+            const data = await response.json();
+            console.log('Post response:', data); // Debug
+            
+            if (!response.ok || !data.success) {
+                throw new Error(data.message || 'Failed to post comment');
+            }
+            
+            commentContent.value = '';
+            loadComments(); // Reload comments after successful post
+        })
+        .catch(error => {
+            console.error('Error details:', error);
+            alert(error.message || 'Error posting comment. Please try again.');
+        });
+    }
+
+    function createCommentHTML(comment) {
+        const date = new Date(comment.dateCreated).toLocaleDateString();
+        return `
+            <div class="comment mb-3 p-3 border rounded">
+                <div class="d-flex justify-content-between">
+                    <strong>${comment.authorName || 'Anonymous'}</strong>
+                    <small>${date}</small>
+                </div>
+                <p class="mt-2 mb-0">${comment.content}</p>
+            </div>
+        `;
+    }
+});
+
