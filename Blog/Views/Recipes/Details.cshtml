@@ -84,7 +84,7 @@
                         <div class="rating"> 
                             @for (int i = 1; i <= 5; i++)
                             {
-                            <span class="star" data-rating="@i">☆</span>
+                                <span class="star" data-rating="@i">☆</span>
                             }
                         </div>
                         <div id="ratingMessage" class="mt-2"></div>
@@ -133,38 +133,48 @@
                 </ol>
             </dd>
         </div>
-    </div>
-    
-    <!-- Comments Section -->
-    <div class="row mt-5">
-        <div class="col-12">
-            <h4>Comments</h4>
-            @{
-                var currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-            }
-            <script>
-                window.currentUserId = '@currentUserId';
-                window.isAdmin = @Json.Serialize(User.IsInRole("Admin"));
-            </script>
-            @if (User.Identity.IsAuthenticated)
-            {
-                <div class="mb-4">
-                    <textarea id="commentContent" class="form-control" rows="3" placeholder="Leave a comment..."></textarea>
-                    <button id="submitComment" class="btn btn-primary mt-2">Submit Comment</button>
+        <!-- Comments Section -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <h4 class="fw-bold text-dark">Comments</h4>
+
+                @* Script para identificação do usuário e permissões de administrador *@
+                @{
+                    var currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                }
+                <script>
+                    window.currentUserId = '@currentUserId';
+                    window.isAdmin = @Json.Serialize(User.IsInRole("Admin"));
+                </script>
+
+                @* Se o usuário estiver autenticado, exibir campo para novo comentário *@
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <div class="bg-light p-3 rounded shadow-sm mb-4">
+                        <textarea id="commentContent" class="form-control border-0 shadow-sm" rows="3" placeholder="Type your comment here..." maxlength="200" style="resize: none; border-radius: 8px;"></textarea>
+                        <small class="text-muted">Max 200 characters.</small>
+                        <div class="text-end mt-0">
+                            <button id="submitComment" class="btn btn-dark px-4 py-2" style="font-weight: bold; color: white">Post</button>
+                        </div>
+                    </div>
+                }
+
+                <div id="commentsContainer" class="pt-4">
+                    <!-- Comments will be dynamically loaded here -->
+                    <!-- Comments placeholder (optional) -->
+                    <div class="comment-placeholder text-center text-muted">No comments yet. Be the first to leave a comment!</div>
                 </div>
-            }
-            <div id="commentsContainer">
-                <!-- Comments will be loaded here -->
             </div>
         </div>
-    </div>
 
-    <div class="text-end mt-4">
-        @if (User.IsInRole("Admin") || User.IsInRole("Moderator"))
-        {
-            <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn fw-bold text-white" style="background-color: #f4ba18; border-color: #f4ba18;">Edit</a>
-            <a asp-action="Index" class="btn btn-outline-secondary fw-bold">Back to List</a>
-        }
+        <div class="text-end mt-4">
+            @if (User.IsInRole("Admin") || User.IsInRole("Moderator"))
+            {
+                <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn fw-bold text-white" style="background-color: #f4ba18; border-color: #f4ba18;">Edit</a>
+                <a asp-action="Index" class="btn btn-outline-secondary fw-bold">Back to List</a>
+            }
+        </div>
     </div>
 </div>
+
 

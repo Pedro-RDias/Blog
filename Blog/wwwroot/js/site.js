@@ -289,24 +289,28 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function createCommentHTML(comment) {
         const date = new Date(comment.dateCreated).toLocaleDateString();
+        const time = new Date(comment.dateCreated).toLocaleTimeString();
         const canDelete = window.currentUserId === comment.authorId || window.isAdmin;
+        
         
         return `
             <div class="comment mb-3 p-3 border rounded" data-comment-id="${comment.id}">
                 <div class="d-flex justify-content-between">
                     <strong>${comment.authorName || 'Anonymous'}</strong>
                     <div>
-                        <small>${date}</small>
-                        ${canDelete ? `
-                            <button class="btn btn-sm btn-danger ms-2 delete-comment" 
-                                    onclick="deleteComment(${comment.id})">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        ` : ''}
+                        <small>${date} ${time} </small>
                     </div>
                 </div>
-                <p class="mt-2 mb-0">${comment.content}</p>
+                <p class="mt-2 mb-1">${comment.content}</p>
+                ${canDelete ? `
+                <div class="d-flex justify-content-end mt-2">
+                    <button class="btn btn-danger" title="Delete" onclick="deleteComment(${comment.id})">
+                        <i class="bi bi-trash3-fill"></i>
+                    </button>
+                </div>
+            ` : ''}
             </div>
+            
         `;
     }
 });
