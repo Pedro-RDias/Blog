@@ -149,7 +149,7 @@ document.addEventListener("DOMContentLoaded", function() {
             selectedYear.value = event.target.getAttribute('data-year');
             updateIcon();
             showSelectedFilter();
-            // Aqui você pode manter `searchForm.submit()` caso precise aplicar o filtro imediatamente
+            
         }
     });
 
@@ -166,7 +166,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Função para realizar o scroll para a seção de receitas
     function scrollToRecipesSection() {
-        recipesSection.scrollIntoView({ behavior: 'smooth' });
+        const recipeCount = parseInt(recipesSection.getAttribute('data-recipe-count'), 10);
+
+        // Rola apenas se houver receitas
+        if (recipeCount > 0) {
+            recipesSection.scrollIntoView({ behavior: 'smooth' });
+        }
     }
 
     // Adiciona evento de submissão do formulário para ativar o scroll

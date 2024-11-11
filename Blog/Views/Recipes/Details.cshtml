@@ -80,7 +80,6 @@
                 {
                     @Html.AntiForgeryToken()
                     <dt class="col-sm-3 fw-bold">Rate this Recipe</dt> 
-                    <yield break></yield>
                     <dd class="col-sm-9">
                         <div class="rating"> 
                             @for (int i = 1; i <= 5; i++)
@@ -139,9 +138,8 @@
     <div class="text-end mt-4">
         @if (User.IsInRole("Admin") || User.IsInRole("Moderator"))
         {
-            <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary me-2" style="background-color: #8ea83d; border-color: #8ea83d;">Edit</a>
-            <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
+            <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn fw-bold text-white" style="background-color: #f4ba18; border-color: #f4ba18;">Edit</a>
+            <a asp-action="Index" class="btn btn-outline-secondary fw-bold">Back to List</a>
         }
-        <a asp-action="Index" asp-controller="Home" class="btn btn-primary ms-2">Go Back</a>
     </div>
 </div>

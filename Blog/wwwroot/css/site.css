@@ -30,23 +30,6 @@ body {
   resize: none !important;
 }
 
-.nav-pills .nav-link.active {
-  background-color: rgba(240,90,40, 0.2); /* Replace with your desired color */
-  border-color: rgba(240,90,40, 0.2);
-  color: black; /* Adjust text color as needed */
-}
-
-.btn-primary {
-  background-color:rgba(240,90,40, 0.2);
-  color:black;
-  border-color: rgba(240,90,40, 0.2);
-}
-
-.btn-primary:hover {
-  background-color: #f3bb7a; /* Substitua pela cor desejada */
-  border-color: #f3bb7a; /* Ajusta a borda para combinar com o fundo */
-  color: black;
-}
 
 .button-container {
   display: flex;
@@ -65,11 +48,6 @@ body {
   border-color: #8ea83d;
 }
 
-.alert-danger {
-  background-color: rgba(240,90,40, 0.1); /* Fundo laranja claro para erros */
-  border-color: rgba(240,90,40, 0.2);
-}
-
 /* Borda arredondada e sombra leve */
 .alert-dismissible {
   border-radius: 8px;
@@ -78,13 +56,6 @@ body {
 
 .alert p {
   font-size: 1.1rem;
-}
-
-/* Container da tabela com bordas arredondadas e contorno cinza */
-.table-container {
-  border-radius: 8px; /* Bordas arredondadas */
-  border: 1px solid #000000; /* Contorno cinza */
-  overflow: hidden; /* Garante o arredondamento nas bordas */
 }
 
 /* Remover margem inferior da tabela para manter o arredondamento do container */

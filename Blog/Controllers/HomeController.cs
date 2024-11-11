@@ -67,6 +67,8 @@ public class HomeController : Controller
 
     public async Task<IActionResult> Index(RecipeFilterParameters parameters)
     {
+        parameters.PageSize = 8; // 8 receitas por página
+        
         var query = _context.Recipes
             .Include(r => r.Author)
             .Include(r => r.Comments)

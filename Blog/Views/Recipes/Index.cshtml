@@ -5,42 +5,40 @@
 }
 
 <div class="container mt-5">
-    <h1 class="text-center mb-4">@ViewData["Title"]</h1>
+    <h1 class="text-center">@ViewData["Title"]</h1>
 
     <p class="text-end">
-        <a asp-action="Create" class="btn btn-primary">Create New</a>
+        <a asp-action="Create" class="btn btn-dark text-white fw-bold">Add New Recipe</a>
     </p>
 
-    <div class="table-container">
-        <table class="table mb-0 bg-light">
-            <thead class="table-secondary text-black">
-                <tr>
-                    <th>@Html.DisplayNameFor(model => model.Title)</th>
-                    <th>@Html.DisplayNameFor(model => model.Summary)</th>
-                    <th>@Html.DisplayNameFor(model => model.Category)</th>
-                    <th>@Html.DisplayNameFor(model => model.Diet)</th>
-                    <th>@Html.DisplayNameFor(model => model.DateCreated)</th>
-                    <th>@Html.DisplayNameFor(model => model.DateUpdated)</th>
-                    <th>@Html.DisplayNameFor(model => model.Author)</th>
-                    <th></th>
+    <div class="table-responsive bg-white rounded shadow p-4">
+        <table class="table mb-0 table-borderless">
+            <thead class="border-bottom">
+                <tr class="text-secondary" style="color: #333; font-size: 0.9rem;">
+                    <th class="py-3">Title</th>
+                    <th class="py-3">Category</th>
+                    <th class="py-3">Diet</th>
+                    <th class="py-3">Created</th>
+                    <th class="py-3">Updated</th>
+                    <th class="py-3">Author</th>
+                    <th class="py-3 text-end">Actions</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var item in Model)
                 {
-                    <tr>
-                        <td>@Html.DisplayFor(modelItem => item.Title)</td>
-                        <td>@Html.DisplayFor(modelItem => item.Summary)</td>
-                        <td>@Html.DisplayFor(modelItem => item.Category)</td>
-                        <td>@Html.DisplayFor(modelItem => item.Diet)</td>
-                        <td>@Html.DisplayFor(modelItem => item.DateCreated)</td>
-                        <td>@Html.DisplayFor(modelItem => item.DateUpdated)</td>
-                        <td>@Html.DisplayFor(modelItem => item.Author.UserName)</td>
-                        <td>
-                            <div class="d-flex gap-2">
-                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-primary" style="background-color: #8ea83d; border-color: #8ea83d;">Edit</a>
-                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-warning ">Details</a>
-                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger text-black">Delete</a>
+                    <tr class="border-bottom align-middle" style="background-color: #f7f7f7;">
+                        <td class="py-3">@Html.DisplayFor(modelItem => item.Title)</td>
+                        <td class="py-3">@Html.DisplayFor(modelItem => item.Category)</td>
+                        <td class="py-3">@Html.DisplayFor(modelItem => item.Diet)</td>
+                        <td class="py-3">@Html.DisplayFor(modelItem => item.DateCreated)</td>
+                        <td class="py-3">@Html.DisplayFor(modelItem => item.DateUpdated)</td>
+                        <td class="py-3">@Html.DisplayFor(modelItem => item.Author.UserName)</td>
+                        <td class="py-3 text-end">
+                            <div class="d-flex justify-content-end gap-2">
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning text-white fw-bold">Edit</a>
+                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-success fw-bold text-white">Details</a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger fw-bold text-white">Delete</a>
                             </div>
                         </td>
                     </tr>
@@ -49,4 +47,3 @@
         </table>
     </div>
 </div>
-
