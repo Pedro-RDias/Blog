@@ -46,3 +46,32 @@ button.accept-policy {
   white-space: nowrap;
   line-height: 60px;
 }
+
+@media (max-width: 991.98px) {
+    .navbar-collapse {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        background-color: #fff;
+        padding: 1rem;
+        border-radius: 0.25rem;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        margin-top: 0.5rem;
+    }
+
+    .navbar {
+        position: relative;
+    }
+
+    .navbar-toggler {
+        border: 1px solid #ddd;
+        padding: 0.5rem;
+    }
+
+    .navbar-toggler:focus {
+        box-shadow: none;
+        outline: none;
+    }
+}
