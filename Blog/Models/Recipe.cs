@@ -39,4 +39,8 @@ public class Recipe
     public double AverageRating => Ratings != null && Ratings.Any()
         ? Ratings.Average(r => r.RatingValue)
         : 0.0; // Define a média como 0 se não houver ratings
+    
+    // Propriedade calculada para o número de ratings
+    [NotMapped]
+    public int RatingCount => Ratings?.Count ?? 0;
 }

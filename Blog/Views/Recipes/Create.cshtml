@@ -7,30 +7,29 @@
 }
 <div class="container mt-5">
     <h1 class="text-center mb-4">Create Recipe</h1>
-    <hr/>
 
-    <form asp-action="Create" method="post" id="recipeForm" class="border rounded p-4 bg-light" enctype="multipart/form-data">
+    <form asp-action="Create" method="post" id="recipeForm" class="p-4 shadow-sm bg-white rounded" enctype="multipart/form-data">
         <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
         <!-- Recipe Title -->
-        <div class="form-group">
-            <label asp-for="Title" class="control-label">Recipe Title</label>
+        <div class="mb-3">
+            <label asp-for="Title" class="form-label fw-semibold">Recipe Title</label>
             <input asp-for="Title" class="form-control" placeholder="Enter recipe title" maxlength="150"/>
-            <small class="form-text text-muted">Max 150 characters.</small>
+            <small class="text-muted">Max 150 characters.</small>
             <span asp-validation-for="Title" class="text-danger"></span>
         </div>
 
         <!-- Category and Diet Selection -->
-        <div class="row my-3">
-            <div class="col-md-6 form-group">
-                <label asp-for="Category" class="control-label">Category</label>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label asp-for="Category" class="form-label fw-semibold">Category</label>
                 <select asp-for="Category" asp-items="Html.GetEnumSelectList<Category>()" class="form-select">
                     <option selected="selected" value="">Please select a category</option>
                 </select>
                 <span asp-validation-for="Category" class="text-danger"></span>
             </div>
-            <div class="col-md-6 form-group">
-                <label asp-for="Diet" class="control-label">Diet</label>
+            <div class="col-md-6 mb-3">
+                <label asp-for="Diet" class="form-label fw-semibold">Diet</label>
                 <select asp-for="Diet" asp-items="Html.GetEnumSelectList<Diet>()" class="form-select">
                     <option selected="selected" value="">Please select a diet type</option>
                 </select>
@@ -39,63 +38,53 @@
         </div>
 
         <!-- Recipe Summary -->
-        <div class="form-group mb-2">
-            <label asp-for="Summary" class="control-label">Summary</label>
-            <textarea asp-for="Summary" class="form-control" placeholder="Brief description of the recipe" maxlength="500"
-                      style="resize: none; height: 100px;"></textarea>
-            <small class="form-text text-muted">Max 500 characters.</small>
+        <div class="mb-4"> 
+            <label asp-for="Summary" class="form-label fw-semibold">Summary</label>
+            <textarea asp-for="Summary" class="form-control" placeholder="Brief description of the recipe" maxlength="500" style="resize: none; height: 100px;"></textarea>
+            <small class="text-muted">Max 500 characters.</small>
             <span asp-validation-for="Summary" class="text-danger"></span>
         </div>
 
-        <div class="container mt-3">
-            <div class="row">
-                <!-- Ingredients Column -->
-                <div class="col-md-6">
-                    <h4 class="my-4">Ingredients</h4>
-                    <div id="ingredients" class="border rounded p-3 mb-3 bg-light">
-                        <!-- Ingredients will be added dynamically here -->
-                    </div>
-                    <div class="text-start">
-                        <button type="button" id="addIngredientBtn" class="btn btn-secondary" style="background-color: rgba(240,90,40, 0.2); border-color: rgba(240,90,40, 0.2); color: black;">Add Ingredient</button>
-                    </div>
+        <div class="row">
+            <!-- Ingredients Column -->
+            <div class="col-md-6">
+                <h4 class="mb-3 fw-bold text-dark">Ingredients</h4>
+                <div id="ingredients" class="p-3 bg-light rounded mb-3">
+                    <!-- Ingredients will be added dynamically here -->
                 </div>
+                <button type="button" id="addIngredientBtn" class="btn btn-outline-secondary fw-semibold">Add Ingredient</button>
+            </div>
 
-                <!-- Preparation Steps Column -->
-                <div class="col-md-6">
-                    <h4 class="my-4">Preparation Steps</h4>
-                    <div id="steps" class="border rounded p-3 mb-3 bg-light">
-                        <!-- Steps will be added dynamically here -->
-                    </div>
-                    <div class="text-start">
-                        <button type="button" id="addStepBtn" class="btn btn-secondary" style="background-color: rgba(240,90,40, 0.2); border-color: rgba(240,90,40, 0.2); color: black;">Add Step</button>
-                    </div>
+            <!-- Preparation Steps Column -->
+            <div class="col-md-6">
+                <h4 class="mb-3 fw-bold text-dark">Preparation Steps</h4>
+                <div id="steps" class="p-3 bg-light rounded mb-3">
+                    <!-- Steps will be added dynamically here -->
                 </div>
+                <button type="button" id="addStepBtn" class="btn btn-outline-secondary fw-semibold">Add Step</button>
             </div>
         </div>
 
         <!-- Photos -->
-        <div class="form-group">
-            <label>Recipe Photos</label>
-            <div id="photoUploadContainer">
-                <div class="photo-upload-row mb-3">
-                    <input type="file" name="photoFiles" class="form-control" accept="image/*" asp-for="Photos" multiple required/>
-                </div>
-            </div>
+        <div class="mb-4">
+            <label class="form-label mt-4 fw-semibold">Recipe Photos</label>
+            <input type="file" name="photoFiles" class="form-control" accept="image/*" asp-for="Photos" multiple required />
         </div>
 
         <!-- Hidden Inputs for Ingredients and Steps JSON -->
         <input type="hidden" id="ingredientsJson" name="IngredientsJson" value="@(Model?.Ingredients != null ? JsonSerializer.Serialize(Model.Ingredients) : "")"/>
         <input type="hidden" id="stepsJson" name="StepsJson" value="@(Model?.PreparationSteps != null ? JsonSerializer.Serialize(Model.PreparationSteps) : "")"/>
 
+        <!-- Publish Option -->
         <div class="form-check mb-3">
-            <input asp-for="Published" class="form-check-input" type="checkbox" />
-            <label asp-for="Published" class="form-check-label">Publish Recipe</label>
+            <input asp-for="Published" class="form-check-input" />
+            <label asp-for="Published" class="form-check-label fw-semibold">Publish Recipe</label>
         </div>
 
-        <!-- Botões de Ação -->
-        <div class="text-end mt-4">
-            <a asp-action="Index" class="btn btn-outline-secondary me-2">Back to List</a>
-            <input type="submit" value="Create" class="btn btn-primary" style="background-color: #8ea83d; border-color: #8ea83d;"/>
+        <!-- Action Buttons -->
+        <div class="d-flex justify-content-end gap-2">
+            <a asp-action="Index" class="btn btn-outline-secondary fw-bold">Back to List</a>
+            <input type="submit" value="Create" class="btn fw-bold text-white" style="background-color: #f4ba18; border-color: #f4ba18;"/>
         </div>
     </form>
 </div>

@@ -3,38 +3,38 @@
     var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
 }
 
-<div class="border rounded p-4 bg-light">
+<div class="border rounded shadow-sm p-4 bg-light">
     <ul class="nav nav-pills flex-column">
         <li class="nav-item mb-2">
-            <a class="nav-link @ManageNavPages.IndexNavClass(ViewContext) text-dark" id="profile" asp-page="./Index">
+            <a class="nav-link @ManageNavPages.IndexNavClass(ViewContext) text-dark fw-semibold" 
+               id="profile" asp-page="./Index" style="--bs-nav-pills-link-active-bg: #f4ba18;">
                 Profile
             </a>
         </li>
         <li class="nav-item mb-2">
-            <a class="nav-link @ManageNavPages.EmailNavClass(ViewContext) text-dark" id="email" asp-page="./Email">
+            <a class="nav-link @ManageNavPages.EmailNavClass(ViewContext) text-dark fw-semibold" 
+               id="email" asp-page="./Email" style="--bs-nav-pills-link-active-bg: #f4ba18;">
                 Email
             </a>
         </li>
         <li class="nav-item mb-2">
-            <a class="nav-link @ManageNavPages.ChangePasswordNavClass(ViewContext) text-dark" id="change-password" asp-page="./ChangePassword">
+            <a class="nav-link @ManageNavPages.ChangePasswordNavClass(ViewContext) text-dark fw-semibold" 
+               id="change-password" asp-page="./ChangePassword" style="--bs-nav-pills-link-active-bg: #f4ba18;">
                 Password
             </a>
         </li>
         @if (hasExternalLogins)
         {
             <li class="nav-item mb-2">
-                <a class="nav-link @ManageNavPages.ExternalLoginsNavClass(ViewContext) text-dark" id="external-login" asp-page="./ExternalLogins">
+                <a class="nav-link @ManageNavPages.ExternalLoginsNavClass(ViewContext) text-dark fw-semibold" 
+                   id="external-login" asp-page="./ExternalLogins" style="--bs-nav-pills-link-active-bg: #f4ba18;">
                     External Logins
                 </a>
             </li>
         }
-        @* <li class="nav-item mb-2"> *@
-        @*     <a class="nav-link @ManageNavPages.TwoFactorAuthenticationNavClass(ViewContext) text-dark" id="two-factor" asp-page="./TwoFactorAuthentication"> *@
-        @*         Two-Factor Authentication *@
-        @*     </a> *@
-        @* </li> *@
         <li class="nav-item mb-2">
-            <a class="nav-link @ManageNavPages.PersonalDataNavClass(ViewContext) text-dark" id="personal-data" asp-page="./PersonalData">
+            <a class="nav-link @ManageNavPages.PersonalDataNavClass(ViewContext) text-dark fw-semibold" 
+               id="personal-data" asp-page="./PersonalData" style="--bs-nav-pills-link-active-bg: #f4ba18;">
                 Personal Data
             </a>
         </li>
