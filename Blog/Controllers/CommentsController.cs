@@ -42,7 +42,7 @@ namespace Blog
                     id = c.Id,
                     content = c.Content,
                     dateCreated = c.DateCreated,
-                    authorName = c.Author?.UserName ?? "Anonymous"
+                    authorName = c.Author?.FirstName +" "+ c.Author?.LastName  ?? "Anonymous"
                 }).ToList();
 
                 return Ok(new { 
@@ -99,7 +99,7 @@ namespace Blog
                         id = comment.Id,
                         content = comment.Content,
                         dateCreated = comment.DateCreated,
-                        authorName = comment.Author?.UserName
+                        authorName = comment.Author?.FirstName +" "+ comment.Author?.LastName
                     }
                 };
 
