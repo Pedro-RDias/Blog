@@ -148,26 +148,28 @@
                 }
                 </div>
                 <!-- Paginação -->
+            <!-- Pagination Links -->
             <nav aria-label="Recipe pagination" class="d-flex justify-content-center mt-4">
                 <ul class="pagination">
                     @if (Model.Recipes.HasPreviousPage)
                     {
-                        <li class="page-item">
-                            <a class="btn btn-warning" asp-action="Index" asp-route-pageNumber="@(Model.Recipes.PageIndex - 1)" asp-route-searchTerm="@Model.SearchTerm" asp-route-month="@Model.CurrentMonth" asp-route-year="@Model.CurrentYear" style="font-weight: bold; color: white;">
-                                &laquo; Previous
-                            </a>
-                        </li>
+                    <li class="page-item">
+                        <a class="btn btn-warning" asp-action="Index" asp-route-pageNumber="@(Model.Recipes.PageIndex - 1)" asp-route-searchTerm="@Model.SearchTerm" asp-route-month="@Model.CurrentMonth" asp-route-year="@Model.CurrentYear" style="font-weight: bold; color: white;" onclick="setScrollFlag()">
+                            &laquo; Previous
+                        </a>
+                    </li>
                     }
                     @if (Model.Recipes.HasNextPage)
                     {
-                        <li class="page-item">
-                            <a class="btn btn-warning" asp-action="Index" asp-route-pageNumber="@(Model.Recipes.PageIndex + 1)" asp-route-searchTerm="@Model.SearchTerm" asp-route-month="@Model.CurrentMonth" asp-route-year="@Model.CurrentYear" style="font-weight: bold; color: white">
-                                Next &raquo;
-                            </a>
-                        </li>
+                    <li class="page-item">
+                        <a class="btn btn-warning" asp-action="Index" asp-route-pageNumber="@(Model.Recipes.PageIndex + 1)" asp-route-searchTerm="@Model.SearchTerm" asp-route-month="@Model.CurrentMonth" asp-route-year="@Model.CurrentYear" style="font-weight: bold; color: white" onclick="setScrollFlag()">
+                            Next &raquo;
+                        </a>
+                    </li>
                     }
                 </ul>
             </nav>
+
         </section>
     </div>
 </main>

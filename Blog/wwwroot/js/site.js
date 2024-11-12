@@ -212,6 +212,25 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 });
 
+// scroll da paginação 
+document.addEventListener("DOMContentLoaded", function() {
+    const recipesSection = document.getElementById('recipes-section');
+
+    function scrollToRecipesSection() {
+        recipesSection.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Check if the scroll flag is set and scroll to recipes section
+    if (sessionStorage.getItem('scrollToRecipes') === 'true') {
+        sessionStorage.removeItem('scrollToRecipes'); // Remove the flag after scrolling
+        scrollToRecipesSection();
+    }
+});
+function setScrollFlag() {
+    sessionStorage.setItem('scrollToRecipes', 'true'); // Set flag to scroll after page reload
+}
+
+
 
 
 // Comment System
